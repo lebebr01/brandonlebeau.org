@@ -1,0 +1,106 @@
+baseurl = "/"
+relativeurls = true
+languageCode = "en-us"
+title = "Brandon LeBeau"
+theme = "hugo-future-imperfect"
+googleAnalytics = ""
+disqusShortname = ""
+ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
+
+[permalinks]
+    post = "/:year/:month/:day/:slug/"
+
+[params]
+    description = "A website built through Hugo and blogdown."
+    navbarTitle = "Brandon LeBeau"
+    socialAppearAtTop    = true
+    socialAppearAtBottom = true
+    categoriesByCount    = true
+    includeReadingTime   = true
+
+    # options for highlight.js (version, additional languages, and theme)
+    highlightjsVersion = "9.11.0"
+    highlightjsCDN = "//cdn.bootcss.com"
+    highlightjsLang = ["r", "yaml", "latex", "html", "bash", "markdown"]
+    highlightjsTheme = "github"
+
+    MathJaxCDN = "//cdn.bootcss.com"
+    MathJaxVersion = "2.7.1"
+
+    [params.intro]
+      header = "Brandon LeBeau"
+      paragraph1 = "Assistant Professor"
+      paragraph2 = "R Enjoyer"
+      paragraph3 = "Model Builder"
+      about = "Assistant Professor of Educational Measurement and Statistics at the University of Iowa..."
+
+    [params.intro.pic]
+      src = "/img/twitProfileSmall.jpg"
+      circle = true
+      imperfect = false
+      alt = "Brandon LeBeau"
+
+    [params.postAmount]
+      sidebar = 3
+
+    [[menu.main]]
+      name = "Educate-R Blog"
+      url = "/post"
+      weight = 1
+
+    [[menu.main]]
+      name = 'Categories'
+      url = '/categories'
+      weight = 6
+
+    [[menu.main]]
+      name = 'About'
+      url = "/about"
+      weight = 5
+
+    [[menu.main]]
+      name = "R Packages"
+      url = "/packages"
+      weight = 4
+
+    [[menu.main]]
+      name = "Publications"
+      url = "/publications"
+      weight = 2
+
+    [[menu.main]]
+      name = "Presentations"
+      url = "/slides"
+      weight = 3
+
+    
+    [social]
+      github          = "lebebr01"
+      bitbucket       = ""
+      jsfiddle        = ""
+      codepen         = ""
+      foursquare      = ""
+      dribbble        = ""
+      deviantart      = ""
+      behance         = ""
+      flickr          = ""
+      instagram       = ""
+      youtube         = ""
+      vimeo           = ""
+      vine            = ""
+      medium          = ""
+      wordpress       = ""
+      tumblr          = ""
+      xing            = ""
+      linkedin        = "blebeau11"
+      slideshare      = ""
+      stackoverflow   = ""
+      reddit          = ""
+      pinterest       = ""
+      googleplus      = ""
+      facebook        = ""
+      facebook_admin  = ""
+      twitter_domain  = ""
+      twitter         = "blebeau11"
+      email           = ""
+

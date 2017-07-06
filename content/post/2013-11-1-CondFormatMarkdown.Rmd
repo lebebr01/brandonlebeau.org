@@ -1,0 +1,73 @@
+---
+title: "Formatting Markdown Table with R"
+author: "Brandon LeBeau"
+date: 2013-11-01
+categories: ["R"] 
+tags: ["markdown", "CSS"]
+---
+
+This past summer when the [twin cities R user group](http://www.meetup.com/twincitiesrug/) was starting to get back up and running, I offered to present on some R related things that I was working on.  One thing I was working on was a part of my last [post](http://http://educate-r.org/2013/09/28/ConditionalFormat/).  In a response to discussing this during a meeting, I was posed with the problem of how to do this with a markdown table.  I replied I was unsure how to do this directly with R, but it could likely be possible.
+
+After replying to this e-mail, I went to work thinking about how this could be done.  I knew you could add some CSS to the resulting HTML file, but the question remained how could this be done succintly and with conditional formatting.
+
+The resulting thought process led me to create the **[highlightHTML](https://github.com/lebebr01/highlightHTML)** which post processes the HTML file to inject some CSS into the HTML file.  Here is a simple example to get you started.
+
+First you have a table written in markdown that looks like the following:
+
+| Color Name | Number   |  
+|------------|----------|  
+| Blue       | 5        |  
+| Green      | 35       |  
+| Orange     | 100      |  
+| Red        | 200      |  
+
+Now suppose we want to turn the background color of those less than 5 to blue, and those greater than 100 to red.  To do this using the **highlightHTML** package, the table would change to this:
+
+| Color Name | Number     |  
+|------------|------------|  
+| Blue       | 5  #bgblue |  
+| Green      | 35         |  
+| Orange     | 100        |  
+| Red        | 200 #bgred |  
+
+The addition of the '#bgblue' and '#bgred' tags indicate which cells to change and will also define new id values to assign directly to these cells through CSS.  After adding the tags to the cells to format and converting the markdown file to HTML, it is now time to run the *highlightHTMLcells* command within R.  This command will remove the tags from the table, inject CSS into the resulting HTML document, and assign the id to the specific cells.  Below are the commands needed to install the package and post-process the file:
+
+```{r highlightHTML, eval=FALSE}
+library(devtools)
+install_github(repo = "highlightHTML", username = "lebebr01")
+library(hightlightHTML)
+tags <- c("#bgred {background-color: #FF0000;}", "#bgblue {background-color: #0000FF;}")
+highlightHTMLcells(input = "path/to/file", output = "path/to/saved/file", updateCSS = TRUE, tags = tags)
+```
+
+This results in an HTML table that looks like the following:
+
+<table><thead>
+<tr>
+<th>Color Name</th>
+<th>Number</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Blue</td>
+<td id='bgblue'>5 </td>
+</tr>
+<tr>
+<td>Green</td>
+<td>35</td>
+</tr>
+<tr>
+<td>Orange</td>
+<td>100</td>
+</tr>
+<tr>
+<td>Red</td>
+<td id='bgred'>200</td>
+</tr>
+</tbody></table>
+
+More explanation of the *highlightHTMLcells* command, the input argument is the location of the pre-processed HTML file, the output argument is the place the post-processed HTML file is saved (note: if no output argument is given, it will overwrite the input file), the updateCSS argument tells the function whether to inject the CSS or not, finally the tags argument is a vector of the CSS that will be injected into the post-processed HTML file.  The last argument highlights a drawback of the package in it's current state, the user must know some CSS to tell the function what to inject into the HTML file.  On the one hand, CSS is not overly difficult to learn, but some default behavior would be nice.  I hope to add this in the future.
+
+There you have it, a way to add some formatting to a table written in markdown and being presented in HTML.  Future additions will hopefully add the conditional part into the mix as well.  Stay tuned.
+
+

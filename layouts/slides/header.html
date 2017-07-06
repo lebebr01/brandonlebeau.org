@@ -1,0 +1,52 @@
+<header>
+    <div class="title">
+            <h3><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+        {{ with .Description }}
+            <p>{{ . }}
+            {{ end }}
+              {{ if .Params.citation }}
+                  {{ .Params.citation | safeHTML }}
+              {{ end }}
+            </p>
+        
+    </div>
+    <div class="meta">
+        {{ if .Site.Params.orderByPublishDate }}
+            {{ $.Scratch.Set "dateType" .PublishDate }}
+        {{ else }}
+            {{ $.Scratch.Set "dateType" .Date }}
+        {{ end }}
+
+        <time class="published"
+            datetime='{{ ($.Scratch.Get "dateType").Format "2006-01-02" }}'>
+            {{ ($.Scratch.Get "dateType").Format "January 2, 2006" }}</time>
+        <span class="author">{{ .Params.author }}
+               {{ if .Params.author2 }} 
+               <br>
+               {{ .Params.author2 }}
+               {{end}}
+               {{ if .Params.author3 }} 
+               <br>
+               {{ .Params.author3 }}
+               {{end}}
+               {{ if .Params.author4 }} 
+               <br>
+               {{ .Params.author4 }}
+               {{end}}
+               {{ if .Params.author5 }} 
+               <br>
+               {{ .Params.author5 }}
+               {{end}}
+               {{ if .Params.author6 }} 
+               <br>
+               {{ .Params.author6 }}
+               {{end}}
+               {{ if .Params.author7 }} 
+               <br>
+               {{ .Params.author7 }}
+               {{end}}
+
+        </span>
+        <!--<a href="#" class="author"><span class="name">Jane Doe</span><img src="images/avatar.jpg" alt="" /></a>-->
+    </div>
+</header>

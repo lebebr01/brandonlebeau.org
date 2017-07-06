@@ -1,0 +1,75 @@
+---
+title: "Introduction of the pdfsearch package"
+author: "Brandon LeBeau"
+date: 2016-12-02
+categories: ["R"]
+tags: ["pdfsearch", "package"]
+---
+
+```{r options, echo = FALSE}
+options(width = 100)
+```
+
+I'm happy to introduce an add-on package, `pdfsearch`, that adds the ability to do keyword searches on pdf files. This add-on package uses the excellent `pdftools` package from the [ropensci](https://ropensci.org/) project to read in pdf files and perform keyword searches based character strings of interest. 
+
+## Installation
+The package is currently only hosted on [github](https://github.com/lebebr01/pdfsearch) and can be installed with the devtools library.
+
+```{r install, message = FALSE, eval = FALSE}
+devtools::install_github('lebebr01/pdfsearch')
+```
+
+
+## Basic Example
+Doing a simple keyword search on a single pdf file uses the `keyword_search` function. The following is a simple example using a pdf from [arXiv](https://arxiv.org/).
+
+```{r simp_example, message = FALSE}
+library(pdfsearch)
+
+file <- system.file('pdf', '1501.00450.pdf', package = 'pdfsearch')
+
+key_res <- keyword_search(file, 
+                          keyword = c('repeated measures', 'mixed effects'),
+                          path = TRUE)
+```
+
+In the following example, the function `keyword_search` takes two required arguments, the path to the pdf file and the keyword(s) to search for in the pdf. The optional argument shown above, `path` tells the function to read in the raw pdf using the `pdftools` package. 
+
+```{r output, message = FALSE}
+data.frame(key_res)
+head(key_res$line_text, n = 2)
+```
+
+The output includes the keyword, the page number it is located, the line number the keyword was found, and the line of text. By default, only the line matching the keyword is returned. If the context of the result is desired, there is an optional argument `surround_lines` that can include the lines around the line of the matching keyword.
+
+```{r surround_lines, message = FALSE}
+key_res <- keyword_search(file, 
+                          keyword = c('repeated measures', 'mixed effects'),
+                          path = TRUE, 
+                          surround_lines = 2)
+head(key_res$line_text, n = 2)
+```
+
+## Directory Search
+This package also has the ability to loop over a directory of pdf files in a single run. To do this, the `keyword_directory` function is of interest. Much of the arguments are the same, except a directory is specified instead of a single path to the location of the pdf files.
+
+```{r directory_search, message = FALSE}
+# find directory
+directory <- system.file('pdf', package = 'pdfsearch')
+
+# do search over two files
+head(keyword_directory(directory, 
+       keyword = c('repeated measures', 'measurement error'),
+       surround_lines = 1, full_names = TRUE), n = 12)
+```
+
+Two relavent arguments for the `keyword_directory` function are `full_names` and `recursive`. These functions ask whether the full path for the pdf files in the directory will be used and whether subfolders within the directory will also be searched. 
+
+## Uses for pdfsearch
+This package may be extremely useful when conducting research syntheses or meta analyses, particularly when screening articles for inclusion into the research synthesis or meta analysis. This aim is hopeful to be explored later in more depth. 
+
+### Limitations
+The limitations of the package and the quality of text matches will depend on the pdfs being searched. For example, words that wrap across lines (i.e. hyphenated words) will not be included in the matches as entire words are currently being searched to be matched.
+
+## Moving Forward
+The package will be submitted to CRAN next week, however, any bugs or problems can be submitted to the github site <https://github.com/lebebr01/pdfsearch/issues>. 

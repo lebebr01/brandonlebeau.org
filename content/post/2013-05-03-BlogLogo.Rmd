@@ -1,0 +1,89 @@
+---
+title: "Blog Logo"
+author: "Brandon LeBeau"
+date: 2013-05-03
+categories: ["R"]
+tags: ["ggplot2"]
+---
+
+Here is the code used to create the blog logo.  Took a bit of trial and error, especially with the official R logo.
+
+```{r logo, fig.width = 10, fig.height = 4, tidy=FALSE}
+### Creating words with connected points.
+capE <- data.frame(x = c(1.5,1,1,1.25,1,1,1.5), 
+                   y = c(3,3,2,2,2,1,1))
+capE$time <- 1:nrow(capE)
+
+letd <- data.frame(x = c(2, 1.75, 1.65, 1.75, 2, 2), 
+                   y = c(2,2,1.5,1,1,2.5))
+letd$time <- 1:nrow(letd)
+
+letu <- data.frame(x = c(2.2, 2.2, 2.35, 2.55, 2.55, 2.55), 
+                   y = c(2,1.15,1,1.15,2,1))
+letu$time <- 1:nrow(letu)
+
+letc <- data.frame(x = c(3.05, 2.8, 2.7, 2.8, 3.05), 
+                   y = c(2,2,1.5,1,1))
+letc$time <- 1:nrow(letc)
+
+leta <- data.frame(x = c(3.55, 3.35, 3.2, 3.35, 3.55, 3.55, 3.55), 
+                   y = c(1.85, 2, 1.5, 1, 1.15, 1.85, 1))
+leta$time <- 1:nrow(leta)
+
+lett <- data.frame(x = c(3.75, 3.75, 3.575, 3.925, 3.75, 3.75), 
+                   y = c(2.5, 2.25, 2.25, 2.25, 2.25, 1))
+lett$time <- 1:nrow(lett)
+
+lete <- data.frame(x = c(4.3, 4.05, 3.95, 4.125, 4.3, 4.125, 3.95), 
+                   y = c(1.05, 1, 1.75, 2, 1.75, 1.6, 1.75))
+lete$time <- 1:nrow(lete)
+
+rlogo <- data.frame(x = c(5.1, 5.1, 5.3, 5.4, 5.45, 5.4, 5.3, 5.1, 5.2,
+                          5.25, 5.35, 5.45),
+                    y = c(.5, 2, 2, 1.85, 1.675, 1.4, 1.25, 1.25, 1.25,
+                          1.2, 1.05, .5))
+rlogo$time <- 1:nrow(rlogo)
+
+rcirclogo <- data.frame(x = c(5.6, 5.6, 5.55, 5.45, 5.35, 5.25, 5.15,
+                              5.05, 4.95, 4.85,4.75,  4.75, 4.75,
+                              4.8, 4.95, 5.05, 5.15, 5.25, 5.35, 5.45,
+                              5.55, 5.6, 5.6),
+                        y= c(1.65, 1.8, 2, 2.15, 2.25, 2.3, 2.3, 2.25,
+                             2.15, 2.05, 1.85, 1.7, 1.55, 
+                             1.35, 1.15, 1.05, .95, .95, 1.05, 1.15,
+                             1.35, 1.55, 1.65),
+                        size = c(2.25, 2.75, 3, 3.5, 4, 4, 4.5, 5, 5,
+                                 5, 5, 5, 5, 4.5, 4, 3.75, 3.25, 3,
+                                 2.75, 2.5, 2.25, 2.25, 2))
+rcirclogo$time <- 1:nrow(rcirclogo)
+
+
+
+library(ggplot2)
+library(scales)
+
+p <- ggplot(capE, aes(x = x, y = y)) + theme_bw()
+p + geom_path(lwd = 3, lineend = "round") + 
+  geom_path(data = letd, lwd = 3, lineend = "round") + 
+  geom_path(data = letu, lwd = 3, lineend = "round") + 
+  geom_path(data = letc, lwd = 3, lineend = "round") + 
+  geom_path(data = leta, lwd = 3, lineend = "round") + 
+  geom_path(data = lett,lwd = 3, lineend = "round") + 
+  geom_path(data = lete, lwd = 3, lineend = "round") +
+  geom_path(data = rcirclogo, aes(size = size), color = "grey", 
+            lineend = "round", linejoin = "bevel") + 
+  geom_path(data = rlogo, color = "steelblue", lwd = 6, 
+            lineend = "round") + 
+  geom_path(data = rlogo, color = "grey60", lwd = .5, 
+            lineend= "round") +
+  theme(legend.position = "none", text = element_blank(), 
+        panel.grid = element_blank(),
+        plot.background = element_rect(fill = "transparent", 
+                                       color = NA),
+        panel.background = element_rect(fill = "transparent", 
+                                        color = NA),
+        panel.border = element_blank(),
+        axis.line = element_blank(), axis.ticks = element_blank(),
+        line = element_blank()) + scale_size(range = c(2, 8))
+```
+

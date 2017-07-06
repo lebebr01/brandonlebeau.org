@@ -1,0 +1,70 @@
+---
+title: "Update to highlightHTML package"
+author: "Brandon LeBeau"
+date: 2014-03-14
+categories: ["R"]
+tags: ["highlightHTML", "markdown", "HTML"]
+---
+  
+I've added a new functionality to my `highlightHTML` package.  This package post-processes HTML files and injects CSS and adds tags to create some further customization (for example highlight cells of a HTML table).  This is most useful when writing a document using markdown and converting it into a HTML document using a tool like knitr, slidify, or even pandoc.  
+
+Up to now, my package only worked with tables, see my old post that talks about this if you are interested: http://educate-r.org/2013/11/01/CondFormatMarkdown/.  My update adds a similar functionality to text itself by including span tags in the document.
+
+The following code will install the package with the new feature from github:
+```{r install, eval=FALSE}
+library(devtools)
+install_github(repo = 'highlightHTML', username = 'lebebr01', ref = 'testing')
+```
+
+Once the package is installed, the new function is called `highlightHTMLtext`. This function takes a HTML file as the input and post processes the file to add span tags to format text according to the CSS calls specified by the user.  The function looks for {#id text} to add the span tags.  The braces are used to define the text range that will use the id and the #id is the CSS id itself.  
+
+Here is an example using the HTML file that comes with the package and which can also be found in the help file.
+
+```{r highlight,  tidy = FALSE, warning = FALSE, message = FALSE, error=FALSE, eval=FALSE}
+library(highlightHTML)
+file <- system.file('examples', package = 'highlightHTML')
+file1 <- paste(file, "bgtext.html", sep = "/")
+
+# Change background color and text color with CSS
+tags <- c("#bgblack {background-color: black; color: white;}",
+  "#bgblue {background-color: #0000FF; color: white;}")
+
+# Post-process HTML file
+highlightHTMLtext(input = file1, output = NULL, updateCSS = TRUE,
+  tags = tags, browse = TRUE)
+```
+
+If you run the above command, the file should open in your browser to see the result of the new HTML file.  The result should have boxes of color in specific areas that we indicated by the {#id text} syntax in the raw markdown and HTML file.
+
+My next step is to develop a master function to wrap these other functions so only one call would be needed to format text and tables.  Let me know of any issues by going to the github page: https://github.com/lebebr01/highlightHTML
+
+****************
+
+### Before and After HTML
+Here is what the body of the HTML file looks like before running the function:
+
+```html
+<body>
+<h1>Test of Text</h1>
+
+<p>Testing the ability to change the {#bgblue color} of the text.</p>
+
+<p>Can also do {#bgblack multiple words of text}</p>
+
+<p>{#bgblack Even entire paragraphs that you want to really stand out from the rest of the document.  More than color could also be changed, anything alterable by CSS.  Test out the function and get creative with the CSS}</p>
+</body>
+```
+
+This is what the HTML document looks like after running the function:
+
+```html
+<body>
+<h1>Test of Text</h1>
+<p>Testing the ability to change the <span id='bgblue'> color</span> of the text.</p>
+<p>Can also do <span id='bgblack'> multiple words of text</span></p>
+<p><span id='bgblack'> Even entire paragraphs that you want to really stand out from the rest of the document.  More than color could also be changed, anything alterable by CSS.  Test out the function and get creative with the CSS</span></p>
+</body>
+```
+
+The braces identify the location of the span tags.
+

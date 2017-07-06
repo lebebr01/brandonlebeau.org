@@ -1,0 +1,110 @@
+---
+title: "Use CSS to format markdown or HTML files"
+author: "Brandon LeBeau"
+date: 2017-01-03
+categories: ["R"]
+tags: ["package", "highlightHTML", "markdown", "HTML"]
+---
+
+```{r options, echo = FALSE}
+options(width = 100)
+```
+
+Markdown (and Rmarkdown) are great ways to quickly develop material without worrying about the formatting. The documents can then be compiled using the `knitr` or `rmarkdown` packages to output formats such as HTML, latex, or even word. The main drawback of this approach is that formatting of documents is limited to italics, bold, or strikethrough. Markdown does have support for inline HTML, therefore you can add your own formatting inline using CSS or other HTML attributes, however this moves away from the quick markdown flavor.
+
+To help solve this problem, many R packages are useful for formatting tables, either through conditional formatting or otherwise. The most interesting to me is the [formattable](https://renkun.me/formattable/) package. Other options include the [ReporteRs](http://davidgohel.github.io/ReporteRs/) and [condformat](https://cran.r-project.org/web/packages/condformat/index.html) packages. These packages however focus on table formatting. An option I started working on a few years ago, [highlightHTML](https://github.com/lebebr01/highlightHTML), is a relatively simple package that will help inject CSS automatically into an HTML document to take care of formatting of text and tables. 
+
+Since this package uses CSS for the formatting, knowledge of CSS is required to create the tags to be injected. This has the advantage of allowing users a lot of flexibility with the look they wish to achieve, however, it will be more difficult for users if they do not know CSS. Below is a short demo of functions of interest.
+
+## Installation
+The package was published on CRAN a few days ago and can be installed using `install.packages`:
+```{r install, eval = FALSE}
+install.packages('highlightHTML')
+```
+To get the most out of the package, `rmarkdown` and `knitr` are useful to have installed as well, although not required.
+
+## Simple Example
+Suppose you have a table like the following:
+
+| Color Name | Number       |
+|----------- | ------------ |
+| Blue       |  5           |
+| Green      |  35          |
+| Orange     |  100         |
+| Red        |  200         |
+
+You could then add some conditional formatting by adding the following tags to the table.
+
+| Color Name | Number       |
+|----------- | ------------ |
+| Blue       |  5  #bgblue  |
+| Green      |  35          |
+| Orange     |  100         |
+| Red        |  200 #bgred  |
+
+The addition of the *#bgblue* and *#bgred* indicates which cells will be changed. After turning the markdown document into an html file, this package can now be used to post-process the html file. The post-processing will add an id value for each cell with the *#bgblue* or *#bgred* and remove those from the table. 
+
+The function to use for the post-processing is `highlight_html` and requires three arguments, the input file, the output file, and the CSS tags themselves. This will look something like the following using an example file from the package:
+
+```{r function, eval=FALSE}
+library(highlightHTML)
+file <- system.file('examples', 'bgtable.html', 
+                    package = 'highlightHTML')
+tags <- c("#bgred {background-color: #FF0000;}", 
+  "#bgblue {background-color: #0000FF;}")
+highlight_html(input = file, 
+               output = tempfile(fileext = ".html"), 
+               tags = tags,
+               update_css = TRUE, 
+               browse = TRUE,
+               print = FALSE)
+```
+
+This command will return an HTML file that automatically injects the CSS tags shown above. The new HTML file will add background color to the HTML file as such:
+
+![](figs/highlight_table.png)
+
+## Formatting Text
+The package also allows for the formatting of text with CSS as well. The following is markdown text that will be formatted:
+
+```markdown
+Can highlight {#bgblack multiple words}.
+```
+
+The key is the use of braces following by the CSS id to add to the HTML file. Example usage can be shown with an example file that comes with the package and generated with the following code:
+
+```{r text, eval = FALSE}
+file <- system.file('examples', 'bgtext.html', package = 'highlightHTML')
+
+# Change background color and text color with CSS
+tags <- c("#bgblack {background-color: black; color: white;}", 
+  "#bgblue {background-color: #0000FF; color: white;}",
+  "#colgreen {color: green;}")
+
+# Post-process HTML file
+highlight_html(input = file, output = tempfile(fileext = ".html"),
+               tags = tags, update_css = TRUE, browse = TRUE)
+```
+
+The HTML file would look as follows:
+
+![](figs/highlight_text.png)
+
+## Markdown to HTML Directly
+Finally, with help of the `rmarkdown` package, files can be rendered directly from markdown to an HTML file. Below is an example of this:
+
+```{r render, eval = FALSE}
+file <- system.file('examples', 'mwe.md', package = 'highlightHTML')
+tags <- c("#bgred {background-color: #FF0000; color: white;}",
+   "#bgblue {background-color: #0000FF; color: white;}",
+   "#bgblack {background-color: #000000; color: white;}",
+   "#colgold {color: #FFD700;}")
+highlight_html(input = file, output = tempfile(fileext = '.html'),
+  tags = tags, update_css = TRUE, browse = TRUE, render = TRUE)
+```
+
+## Summary
+The package has a few additional features including the ability to inject tags directly into R tables, see `r ?table_id_inject` for an example of this. To come are a few basic CSS tags that will be built into the package using specific CSS ids. Bug reports are appreciated and can be logged on GitHub <https://github.com/lebebr01/highlightHTML/issues>.
+
+Enjoy!
+

@@ -1,0 +1,60 @@
+---
+title: "Format Markdown Documents in R"
+author: "Brandon LeBeau"
+date: 2014-07-30
+categories: ["R"]
+tags: ["highlightHTML", "package", "CSS", "markdown", "html"]
+---
+
+Have you ever used a markdown file to create an html file?  Have you ever wanted to quickly format the subsequent html file to add some color or other aspects?  If your answer is yes to both of those questions, this package may be of interest to you.
+
+The **[highlightHTML](https://github.com/lebebr01/highlightHTML)** package aims to develop a flexible approach to add formatting to an html document by injecting CSS into the file.  To do this, tags are created within the markdown document telling the R routine where to look for these tags.  If you are familiar with the Twitterverse, this package will be equally comfortable.  The tags take the form of the hashtags on Twitter.  As an example, #bgblue, would be a command to change the background to blue.
+
+The next thing needed by the package is to tell how much of the word, sentence, or header that should be affected by the tag.  To do this, add braces before the tag and include all the content you want to be affected by the tag.  For example, {#bggold this example will have a blue background}. 
+
+Once any tags you want to include are in the markdown document, then the document can be converted into a html file using programs such as *knitr*, *pandoc*, the RStudio "knit HTML" button (or any others).  Once the resulting html file is compiled, then run the html file through the **highlightHTML** package and the html file is searched for the tags, the tags are changed to CSS ids, and by default the CSS tags will be inserted automatically back into the document.
+
+### Minimal Example
+- - - - - - - - - - 
+A markdown document that looks like the following:
+
+```markdown
+# Test of {#colgold highlightHTML} package
+
+Can highlight {#bgblack multiple words}.
+
+Even tables:
+
+| Color Name | Number     |  
+|------------|------------|  
+| Blue       | 5  #bgblue |  
+| Green      | 35         |  
+| Orange     | 100        |  
+| Red        | 200 #bgred |  
+
+```
+
+You would then convert the markdown above into a html file (I hit the knit HTML button in RStudio for this file), then run the following commands in R (assuming the highlightHTML package is not installed):
+
+```{r parse, eval=FALSE}
+library(devtools)
+install_github(repo = "highlightHTML", username = "lebebr01")
+library(highlightHTML)
+
+tags <- c("#bgred {background-color: red;}", "#bgblue {background-color: blue;}",
+          "#colgold {color: gold;}", "#bgblack {background-color: black; color: white;}")
+highlightHTML(input = "path/to/infile.html", output = "path/to/outfile.html", 
+              updateCSS = TRUE, tags = tags, browse = TRUE)
+```
+
+This command will process the html file, look for tags, change the tags to CSS ids, inject the CSS into the document, and lastly open the output file in the browser to see how it looks.  The example above would look like the following after the above commands:
+![](figs/mwe.png)
+
+You can also go to this link to see the post-processed file: [educate-r.org/mwe.html](educate-r.org/mwe.html).
+
+### Upcoming Features
+- - - - - - - - - - - - 
+Currently the package assumes that you know CSS and can supply your own tags.  In the future I'd like to relax this and allow for some basic tags that work without needing to supply the CSS.  I'm hoping to allow background color and text color changes to be made without needing to specify the CSS.  For example, when specifying #bgblue in the markdown file, the R program knows that you want the background color (bg) to be blue.
+
+Try it out and let me know of new features or bugs as you work through the package.
+

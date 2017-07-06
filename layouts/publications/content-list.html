@@ -1,0 +1,14 @@
+<article class="post">
+    {{ .Render "header" }}
+<div id="content">
+        {{ .Summary }}
+    </div>
+
+    <footer>
+        <ul class="actions">
+            <li><a href="{{ .Permalink }}" class="button big">Continue Reading</a></li>
+        </ul>
+        {{ .Render "footer-category" }}
+    </footer>
+
+</article>

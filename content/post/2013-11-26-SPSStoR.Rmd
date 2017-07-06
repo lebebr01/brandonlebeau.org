@@ -1,0 +1,54 @@
+---
+title: "SPSStoR An R package to convert SPSS syntax"
+author: "Brandon LeBeau"
+date: 2013-11-26
+categories: ["r"] 
+tags: ["SPSS", "package"]
+---
+
+My first statistical software package I used as an undergrad was SPSS.  I was fortunate during my senior year at [Luther College](http://www.luther.edu) to be initially introduced to [R](http://r-project.org).  I did not realize it at the time (except for the pretty graphics) that this was the start of something big for me.  Fast forward a year to graduate school at the University of Minnesota and the majority of my program was again using SPSS.  Under the tutelage of [Andy](http://www.cehd.umn.edu/edpsych/people/Faculty/Zieffler.html) in my first graduate statistics course I started to do analyses in both R and SPSS.  After that I started to do all my analyses in R.  Fast forward five years this time to my first full-time job after graduate school at [Saint Paul Public Schools](http://www.spps.org) and again everyone was using SPSS.  Fortunately in my year there I was able to significantly push them toward using R more and more.
+
+This long introduction motivates the following package I started writing mostly just to play with regular expressions, but kept playing and came up with a package with many routines.  The package I came up with is called *SPSStoR* which converts SPSS syntax into R syntax.  Using regular expressions to parse the SPSS syntax to figure out which routine is being run then prints out the R syntax to do the same analysis done by the SPSS syntax.
+
+As you can imagine, the SPSS language has many routines and this is not all encompassing, however it provides many basic commands such as:
+* Aggregate
+* Correlations
+* Crosstab
+* Sort Cases
+* Descriptives
+* One sample t-test
+* Independent sample t-test
+* Get for sav files (SPSS data files)
+* Master SPSStoR function
+* Graphics
+* Frequencies
+
+Examples
+- - - - -
+You can install the package directly from my github page using the devtools library:
+```{r install, eval=FALSE}
+library(devtools)
+install_github("SPSStoR", "lebebr01")
+```
+
+Once you install the package, I've included some example SPSS syntax within the package to use as examples.  One example syntax file reads in an SPSS data file, sorts the file, then computes descriptive statistics on a handful of variables.  The following should run the command from your computer:
+```{r getdescexamp, tidy = FALSE}
+library(SPSStoR)
+file <- paste(system.file('SPSSsyntax', package = 'SPSStoR'), 
+              "/getDescExamp.txt", sep = '')
+spss_to_r(file)
+```
+
+Here is another example doing a one-sample t-test:
+```{r ttest, tidy = FALSE}
+file <- paste(system.file('SPSSsyntax', package = 'SPSStoR'), 
+              "/ttestOneSampExamp.txt", sep = '')
+spss_to_r(file)
+```
+
+Summary
+- - - - - 
+Although some working R knowledge is needed to run this package, such as knowledge of installing packages and what an object is, this package may be useful to those trying to figure out a similar command in R.  Over time I hope to slowly add support for more SPSS routines, see my github page for those that I am currently prioritizing.  Let me know via the issues on github if you'd like support for a specific routine or run into problems.
+
+The package home can be found on github: [SPSStoR](https://github.com/lebebr01/SPSStoR)
+

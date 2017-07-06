@@ -1,0 +1,64 @@
+---
+title: "Speed test of sequence generation for unbalanced simulation"
+author: "Brandon LeBeau"
+date: 2015-05-31
+categories: ["R"]
+tags: ["sequence", "speedtest"]
+---
+
+```{r options, echo = FALSE}
+options(width = 100)
+```
+
+
+I have a simulation package that allows for the simulation of regression models including nested data structures. You can see the package on github here: [simReg](https://github.com/lebebr01/simReg). Over the weekend I updated the package to allow for the simulation of unbalanced designs. I'm hoping to put together a new vigenette soon highlighting the functionality. 
+
+I am working on a simulation that uses the unbalanced functionality and while simulating longitudinal data I've found the function is much slower than the cross sectional counterparts (and balanced designs). I've ran some additional testing and I believe I have the speed issues narrowed down to the fact that I am generating a time variable. Essentially, I have a vector of number of observations per cluster. The function then turns this vector of lengths into a time variable starting at 0 up to the maximum number of observations minus 1 by 1. As an example:
+
+```{r seqExamp}
+x <- round(runif(5, min = 3, max = 10), 0)
+unlist(lapply(1:length(x), function(xx) (1:x[xx]) - 1))
+```
+
+From the code above, you can see that there the number of observations is generated using `runif` which is saved to the object `x`. Then I use a combination of lapply, unlist, and the ':' operator to generate the sequence. This is the same code used in my package above to generate the time variable. 
+
+As such, I was interested in testing various ways to generate the sequence and do a performance comparison. I compared the following ways, the `':'` operator, `seq.int`, `seq`, `do.call` with `mapply`, and `rep.int` for the balanced case as a comparison to how it was done before. This was all done with the great `microbenchmark` package.
+
+Here are the results from the 7 comparisons:
+
+```{r speed, tidy = FALSE}
+library(microbenchmark)
+x <- round(runif(100, min = 3, max = 15), 0)
+microbenchmark(
+  colon = unlist(lapply(1:length(x), function(xx) (1:x[xx]) - 1)),
+  seq.int = unlist(lapply(1:length(x), function(xx) seq.int(0, x[xx] - 1, 1))),
+  seq = unlist(lapply(1:length(x), function(xx) seq(0, x[xx] - 1, 1))),
+  seq.int_mapply = do.call(c, mapply(seq.int, 0, x - 1)),
+  seq_mapply = do.call(c, mapply(seq, 0, x - 1)),
+  colon_mapply = do.call(c, mapply(':', 0, x - 1)),
+  rep.int = rep.int(1:8 - 1, times = 100), # balanced case for reference.
+  times = 1000L
+)
+
+```
+
+The results (in microseconds) show that this is where the significant slowdown is coming in my package implementing the unbalanced cases, although it appears that the ':' operator is the second best alternative. For those that have not seen the significant speed bump of the `seq.int` and `rep.int` over the `seq` and `rep` alternatives should also pay close attention (compare lines 2 and 3 above). 
+
+I'd be interested in alternative procedures that I am not aware of as well. Although not a big deal when running the package once, doing it 50,000 times does add up.
+
+Lastly, for those that are interested, we can show they are all equivalent methods (except for the `rep.int` case).
+
+```{r equivalent}
+identical(
+  unlist(lapply(1:length(x), function(xx) (1:x[xx]) - 1)),
+  unlist(lapply(1:length(x), function(xx) seq.int(0, x[xx] - 1, 1))),
+  unlist(lapply(1:length(x), function(xx) seq(0, x[xx] - 1, 1))),
+  do.call(c, mapply(seq.int, 0, x - 1)),
+  do.call(c, mapply(seq, 0, x - 1)),
+  do.call(c, mapply(':', 0, x - 1))
+)
+
+```
+
+
+

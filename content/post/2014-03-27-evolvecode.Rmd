@@ -1,0 +1,62 @@
+---
+title: "Evolution of Code"
+author: "Brandon LeBeau"
+date: 2014-03-27
+categories: ["R"]
+tags: ["code", "XML"]
+---
+
+Recently while scraping some data from the college football data warehouse site, I started to realize the evolution of my code.  To preface this, I am definitely not a trained programmer, just a self taught junky who enjoys doing it when I have time.  I've slowly evolved my programming skills from simply statistics languages like r or SPSS, to some other languages like LaTeX, HTML, CSS, Javascript, and I've started to work through some python.  
+
+Now back to my realization.  As I mentioned, I was scraping some data from [CFB Data Warehouse](http://www.cfbdatawarehouse.com/) for a project that I'm working on with a colleague and was adapting some code that was written about 3 years ago.  The problem was that my old code was broken.  The original code was about 100 lines of code just to select the correct table and format it.  Here is a chunk of the original code to select the correct table.
+
+```{r pull, eval=FALSE, tidy=FALSE}
+  ##Identifying correct tables
+    tb <- vector("list", length(tableNodes))
+      for(i in 1:length(tableNodes)){
+        tb[[i]] <- readHTMLTable(tableNodes[[i]])
+      }
+
+  ##Tables that are the correct length
+    tabNum <- matrix(nrow=length(tableNodes), ncol=2)
+    tabNum[,1] <- sapply(tb, length)
+    tabNum[,2] <- 1:length(tableNodes)
+
+   Num <- subset(tabNum, tabNum[,1] == 7)[,2]
+
+  ##Selecting and combining tables
+if(length(Num) == 5){
+   tb1 <- tb[[Num[3]]]
+   tb1$Other <- 0
+   tb2 <- tb[[Num[5]]]
+   tb2$Other <- 1
+   tab <- rbind(tb1, tb2)
+ } else { 
+  if(length(Num) ==3){
+   tab <- tb[[Num[3]]]
+   tab$Other <- 1
+ } else {
+  tab <- matrix(NA, ncol= 8, nrow=1)  
+ }
+ }
+```
+
+This code was looped over many different pages and was run once for every page.  Essentially the code is complicated and inconsistent, but at the time 3 years ago the code ran and that was enough for me.  Extract the data from the website no matter how much code was needed to do the work.  This was back in an era when I was just becoming familiar with much or *R*, the *XML* package, and attempting to scrape data from a messy/complicated site.
+
+My new code to extract the tables looks like this:
+
+```{r new, eval=FALSE,tidy=FALSE}
+# extracting tables
+  tabs <- lapply(seq(3, length(Nodes), 1), function(x) 
+    readHTMLTable(Nodes[[x]], stringsAsFactors = FALSE))
+  
+  # Combine tables
+  bowl <- do.call("rbind", tabs)
+```
+
+Much cleaner, simpler, more consistent, and quite possibly quicker.  The ability to focus on speed, readability, and consistency is something that comes later after one becomes more comfortable with the language.  I have been focusing on this for awhile, but these stark differences and ease I was able to adapt my old code especially struck me this time.  I haven't decided if this evolution for me is *mastery* or *expert* status of the r language, but I now feel I have progressed to a point where I feel confident and am able to shift my focus from having code that works, to code that is now clean, consistent, and readable.
+
+Has anyone else had similar epiphanies with their code?
+
+Lastly, if you want to see the raw code, go to the github page: [https://github.com/lebebr01/cfbFootball](https://github.com/lebebr01/cfbFootball).
+
