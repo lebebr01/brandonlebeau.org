@@ -1,13 +1,19 @@
+<iframe id="slideFrame" src="{{"none.html" | relURL }}" style="width:{{with .Get "width"}}{{.}}{{else}}100%{{end}};height:{{with .Get "height"}}{{.}}{{else}}30em{{end}}; border:0px"></iframe>
 
+<div id="slideContent">
 	<link rel="stylesheet" href="{{"revealjs/css/reveal.css"|relURL}}">
 	<link rel="stylesheet" href="{{"revealjs/css/theme/"|relURL}}{{.Params.theme}}.css" id="theme">
 	<link rel="stylesheet" href="{{"revealjs/lib/css/zenburn.css"|relURL}}">
-	
+
 	<div class="reveal">
 	<div class="slides">
-	<section data-markdown>
+	<section data-markdown
+	         data-separator="^---"
+		 data-separator-vertical="^___"
+		 data-separator-notes="^Note:"
+		data-charset="utf8">
 	{{ .RawContent }}
-	 </section>
+	</section>
 	</div>
 	</div>
 	<script src="{{"/revealjs/lib/js/head.min.js"|relURL}}"></script>
@@ -16,10 +22,9 @@
 		Reveal.initialize({
 		      	embedded : true,
 
-		        controls: false,
-        slideNumber: true,
-        center: true,
-        transition: 'fade',
+		        {{ range $key, $value := .Params.revealoptions }}
+		        {{ $key | safeHTML}}:{{$value }},
+		        {{ end }}
 		        // theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
 		        // Optional libraries used to extend on reveal.js
 		        dependencies: [
@@ -32,4 +37,24 @@
 		        ]
 		      });
 	</script>
+	</div>
+<li><a href="#" onclick="slideFullScreen();">See it fullscreen</a></li>
 
+<script type="text/javascript">
+var toto = document.getElementById('slideContent').innerHTML
+document.getElementById('slideFrame').contentWindow.document.write(document.getElementById('slideContent').innerHTML); 
+document.getElementById('slideContent').remove();
+document.addEventListener("DOMContentLoaded",function(){
+	  setTimeout(function () {
+      document.getElementById('slideFrame').contentWindow.initSlides() ;
+    }, 2000);
+});
+
+
+function slideFullScreen() {
+	document.open();
+	document.write(toto);
+	document.close();
+	initSlides()
+}
+</script>
