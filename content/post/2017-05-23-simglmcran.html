@@ -35,14 +35,14 @@ temp_single &lt;- sim_reg(fixed = fixed, fixed_param = fixed_param,
                        data_str = &quot;single&quot;)
 head(temp_single)</code></pre>
 <pre><code>## # A tibble: 6 x 9
-##   X.Intercept.         act       diff numCourse act.numCourse      Fbeta
-##          &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;
-## 1            1 -1.59245912  0.5211281 0.3938681   -0.62721884 -3.7246077
-## 2            1  0.09889929 -0.3280622 1.5452495    0.15282408  7.7815562
-## 3            1  0.19154750  0.2750169 0.3073986    0.05888142  4.2348647
-## 4            1 -0.86296991 -0.3069807 0.7920578   -0.68352206 -0.3537021
-## 5            1 -0.71600323  1.0502124 1.0941654   -0.78342599  2.4489266
-## 6            1  1.35695800  0.4145034 0.3297576    0.44746725  9.8914216
+##   X.Intercept.        act       diff  numCourse act.numCourse     Fbeta
+##          &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;     &lt;dbl&gt;
+## 1            1  0.5444053 -0.7417015 0.62289448    0.33910708  6.294265
+## 2            1  0.2257002 -1.4570485 1.28513460    0.29005517  6.523834
+## 3            1  1.3901496 -1.0240307 0.57740869    0.80268445 10.162867
+## 4            1 -0.7470204 -1.3208325 0.25702726   -0.19200460 -1.793328
+## 5            1  1.5082913 -0.2792219 1.54901132    2.33636029 17.848204
+## 6            1  0.2770652  0.7062265 0.04886328    0.01353831  4.012585
 ## # ... with 3 more variables: err &lt;dbl&gt;, sim_data &lt;dbl&gt;, ID &lt;int&gt;</code></pre>
 <p>Then one can extend this to conduct of power analysis. The benefit of this approach is that you are able to generate data that hopefully more closely resembles data that is to be collected and can also evaluate assumption violations, sample size differences, and other conditions directly into the power analysis similar to a Monte Carlo simulation.</p>
 <pre class="r"><code>fixed &lt;- ~ 1 + act + diff + numCourse + act:numCourse

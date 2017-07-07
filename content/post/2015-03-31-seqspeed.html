@@ -12,7 +12,7 @@ tags: ["sequence", "speedtest"]
 <p>I am working on a simulation that uses the unbalanced functionality and while simulating longitudinal data I’ve found the function is much slower than the cross sectional counterparts (and balanced designs). I’ve ran some additional testing and I believe I have the speed issues narrowed down to the fact that I am generating a time variable. Essentially, I have a vector of number of observations per cluster. The function then turns this vector of lengths into a time variable starting at 0 up to the maximum number of observations minus 1 by 1. As an example:</p>
 <pre class="r"><code>x &lt;- round(runif(5, min = 3, max = 10), 0)
 unlist(lapply(1:length(x), function(xx) (1:x[xx]) - 1))</code></pre>
-<pre><code>##  [1] 0 1 2 3 4 5 6 7 0 1 2 0 1 2 3 4 5 6 7 8 0 1 2 3 4 5 6 7 8 0 1 2 3 4 5 6 7 8</code></pre>
+<pre><code>##  [1] 0 1 2 3 0 1 2 3 4 0 1 2 3 4 5 0 1 2 3 4 5 6 7 8 0 1 2 3 4</code></pre>
 <p>From the code above, you can see that there the number of observations is generated using <code>runif</code> which is saved to the object <code>x</code>. Then I use a combination of lapply, unlist, and the ‘:’ operator to generate the sequence. This is the same code used in my package above to generate the time variable.</p>
 <p>As such, I was interested in testing various ways to generate the sequence and do a performance comparison. I compared the following ways, the <code>':'</code> operator, <code>seq.int</code>, <code>seq</code>, <code>do.call</code> with <code>mapply</code>, and <code>rep.int</code> for the balanced case as a comparison to how it was done before. This was all done with the great <code>microbenchmark</code> package.</p>
 <p>Here are the results from the 7 comparisons:</p>
@@ -30,13 +30,13 @@ microbenchmark(
 )</code></pre>
 <pre><code>## Unit: microseconds
 ##            expr      min        lq        mean    median        uq       max neval
-##           colon   74.029   84.9700  100.325402   92.6270  101.3800  1761.734  1000
-##         seq.int   95.181  108.3090  128.561667  117.4250  126.9060  1721.985  1000
-##             seq 1367.159 1477.1080 1699.365626 1542.3835 1624.9820 41070.169  1000
-##  seq.int_mapply  105.391  118.5190  144.950041  125.4480  137.3000  1359.500  1000
-##      seq_mapply  582.018  631.0665  712.065712  656.7765  694.1550  2676.333  1000
-##    colon_mapply   87.887  100.6510  122.828626  106.8500  119.0665  2447.319  1000
-##         rep.int    1.094    1.8240    2.921701    2.1890    3.2830    24.434  1000</code></pre>
+##           colon   76.217   84.6050  100.757915   90.8040   99.1920  1530.167  1000
+##         seq.int   96.274  106.8495  126.919505  113.7790  122.5310  2621.997  1000
+##             seq 1367.159 1464.8915 1642.101758 1524.6975 1589.6090 42590.125  1000
+##  seq.int_mapply  106.850  117.0600  133.681668  123.6240  132.0125  1205.609  1000
+##      seq_mapply  583.476  630.1550  701.758944  655.8645  690.5085  2206.635  1000
+##    colon_mapply   87.887  100.1035  114.929107  105.5730  113.0500  1326.315  1000
+##         rep.int    1.094    1.8240    2.839658    2.1890    3.2820    24.798  1000</code></pre>
 <p>The results (in microseconds) show that this is where the significant slowdown is coming in my package implementing the unbalanced cases, although it appears that the ‘:’ operator is the second best alternative. For those that have not seen the significant speed bump of the <code>seq.int</code> and <code>rep.int</code> over the <code>seq</code> and <code>rep</code> alternatives should also pay close attention (compare lines 2 and 3 above).</p>
 <p>I’d be interested in alternative procedures that I am not aware of as well. Although not a big deal when running the package once, doing it 50,000 times does add up.</p>
 <p>Lastly, for those that are interested, we can show they are all equivalent methods (except for the <code>rep.int</code> case).</p>
