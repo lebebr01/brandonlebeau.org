@@ -35,14 +35,14 @@ temp_single &lt;- sim_reg(fixed = fixed, fixed_param = fixed_param,
                        data_str = &quot;single&quot;)
 head(temp_single)</code></pre>
 <pre><code>## # A tibble: 6 x 9
-##   X.Intercept.        act       diff   numCourse act.numCourse      Fbeta
-##          &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;
-## 1            1 -0.7590982 -0.0349373 -0.37246821    0.28273996 -1.8094890
-## 2            1  0.2941860  1.0396823  0.09957470    0.02929348  4.6235247
-## 3            1  0.4630411  0.3001680 -1.65868972   -0.76804153 -3.1891646
-## 4            1  0.7785672 -0.5824857  0.78830740    0.61375029  8.5183596
-## 5            1 -1.0955678 -1.0385480  0.31486503   -0.34495598 -3.0087035
-## 6            1 -0.6761900  1.4162352  0.05470025   -0.03698776  0.8289503
+##   X.Intercept.         act       diff numCourse act.numCourse      Fbeta
+##          &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;
+## 1            1 -1.59245912  0.5211281 0.3938681   -0.62721884 -3.7246077
+## 2            1  0.09889929 -0.3280622 1.5452495    0.15282408  7.7815562
+## 3            1  0.19154750  0.2750169 0.3073986    0.05888142  4.2348647
+## 4            1 -0.86296991 -0.3069807 0.7920578   -0.68352206 -0.3537021
+## 5            1 -0.71600323  1.0502124 1.0941654   -0.78342599  2.4489266
+## 6            1  1.35695800  0.4145034 0.3297576    0.44746725  9.8914216
 ## # ... with 3 more variables: err &lt;dbl&gt;, sim_data &lt;dbl&gt;, ID &lt;int&gt;</code></pre>
 <p>Then one can extend this to conduct of power analysis. The benefit of this approach is that you are able to generate data that hopefully more closely resembles data that is to be collected and can also evaluate assumption violations, sample size differences, and other conditions directly into the power analysis similar to a Monte Carlo simulation.</p>
 <pre class="r"><code>fixed &lt;- ~ 1 + act + diff + numCourse + act:numCourse

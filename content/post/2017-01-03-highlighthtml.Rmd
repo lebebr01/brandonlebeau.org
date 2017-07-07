@@ -62,7 +62,7 @@ highlight_html(input = file,
 
 This command will return an HTML file that automatically injects the CSS tags shown above. The new HTML file will add background color to the HTML file as such:
 
-![](figs/highlight_table.png)
+![](/post/2017-01-03-highlighthtml_files/highlight_table.png)
 
 ## Formatting Text
 The package also allows for the formatting of text with CSS as well. The following is markdown text that will be formatted:
@@ -88,7 +88,7 @@ highlight_html(input = file, output = tempfile(fileext = ".html"),
 
 The HTML file would look as follows:
 
-![](figs/highlight_text.png)
+![](/post/2017-01-03-highlighthtml_files/highlight_text.png)
 
 ## Markdown to HTML Directly
 Finally, with help of the `rmarkdown` package, files can be rendered directly from markdown to an HTML file. Below is an example of this:

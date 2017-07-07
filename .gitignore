@@ -1,2 +1,6 @@
 .Rproj.user
-public
+public/
+.Rhistory
+.RData
+.Ruserdata
+Thumbs.db

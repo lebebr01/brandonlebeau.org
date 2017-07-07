@@ -23,8 +23,7 @@ As you can imagine, the SPSS language has many routines and this is not all enco
 * Graphics
 * Frequencies
 
-Examples
-- - - - -
+## Examples
 You can install the package directly from my github page using the devtools library:
 ```{r install, eval=FALSE}
 library(devtools)
@@ -46,8 +45,7 @@ file <- paste(system.file('SPSSsyntax', package = 'SPSStoR'),
 spss_to_r(file)
 ```
 
-Summary
-- - - - - 
+## Summary
 Although some working R knowledge is needed to run this package, such as knowledge of installing packages and what an object is, this package may be useful to those trying to figure out a similar command in R.  Over time I hope to slowly add support for more SPSS routines, see my github page for those that I am currently prioritizing.  Let me know via the issues on github if you'd like support for a specific routine or run into problems.
 
 The package home can be found on github: [SPSStoR](https://github.com/lebebr01/SPSStoR)
