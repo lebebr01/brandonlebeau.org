@@ -1,0 +1,49 @@
+---
+title: "Format Markdown Documents in R"
+author: "Brandon LeBeau"
+date: 2014-07-30
+categories: ["R"]
+tags: ["highlightHTML", "package", "CSS", "markdown", "html"]
+---
+
+
+
+<p>Have you ever used a markdown file to create an html file? Have you ever wanted to quickly format the subsequent html file to add some color or other aspects? If your answer is yes to both of those questions, this package may be of interest to you.</p>
+<p>The <strong><a href="https://github.com/lebebr01/highlightHTML">highlightHTML</a></strong> package aims to develop a flexible approach to add formatting to an html document by injecting CSS into the file. To do this, tags are created within the markdown document telling the R routine where to look for these tags. If you are familiar with the Twitterverse, this package will be equally comfortable. The tags take the form of the hashtags on Twitter. As an example, #bgblue, would be a command to change the background to blue.</p>
+<p>The next thing needed by the package is to tell how much of the word, sentence, or header that should be affected by the tag. To do this, add braces before the tag and include all the content you want to be affected by the tag. For example, {#bggold this example will have a blue background}.</p>
+<p>Once any tags you want to include are in the markdown document, then the document can be converted into a html file using programs such as <em>knitr</em>, <em>pandoc</em>, the RStudio “knit HTML” button (or any others). Once the resulting html file is compiled, then run the html file through the <strong>highlightHTML</strong> package and the html file is searched for the tags, the tags are changed to CSS ids, and by default the CSS tags will be inserted automatically back into the document.</p>
+<div id="minimal-example" class="section level3">
+<h3>Minimal Example</h3>
+<hr />
+<p>A markdown document that looks like the following:</p>
+<pre class="markdown"><code># Test of {#colgold highlightHTML} package
+
+Can highlight {#bgblack multiple words}.
+
+Even tables:
+
+| Color Name | Number     |  
+|------------|------------|  
+| Blue       | 5  #bgblue |  
+| Green      | 35         |  
+| Orange     | 100        |  
+| Red        | 200 #bgred |  
+</code></pre>
+<p>You would then convert the markdown above into a html file (I hit the knit HTML button in RStudio for this file), then run the following commands in R (assuming the highlightHTML package is not installed):</p>
+<pre class="r"><code>library(devtools)
+install_github(repo = &quot;highlightHTML&quot;, username = &quot;lebebr01&quot;)
+library(highlightHTML)
+
+tags &lt;- c(&quot;#bgred {background-color: red;}&quot;, &quot;#bgblue {background-color: blue;}&quot;,
+          &quot;#colgold {color: gold;}&quot;, &quot;#bgblack {background-color: black; color: white;}&quot;)
+highlightHTML(input = &quot;path/to/infile.html&quot;, output = &quot;path/to/outfile.html&quot;, 
+              updateCSS = TRUE, tags = tags, browse = TRUE)</code></pre>
+<p>This command will process the html file, look for tags, change the tags to CSS ids, inject the CSS into the document, and lastly open the output file in the browser to see how it looks. The example above would look like the following after the above commands: <img src="figs/mwe.png" /></p>
+<p>You can also go to this link to see the post-processed file: <a href="educate-r.org/mwe.html" class="uri">educate-r.org/mwe.html</a>.</p>
+</div>
+<div id="upcoming-features" class="section level3">
+<h3>Upcoming Features</h3>
+<hr />
+<p>Currently the package assumes that you know CSS and can supply your own tags. In the future I’d like to relax this and allow for some basic tags that work without needing to supply the CSS. I’m hoping to allow background color and text color changes to be made without needing to specify the CSS. For example, when specifying #bgblue in the markdown file, the R program knows that you want the background color (bg) to be blue.</p>
+<p>Try it out and let me know of new features or bugs as you work through the package.</p>
+</div>

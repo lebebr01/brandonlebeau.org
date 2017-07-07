@@ -1,0 +1,213 @@
+---
+title: "AERA Preview"
+author: "Brandon LeBeau"
+date: 2014-04-02
+categories: ["R"]
+tags: ["rCharts", "Javascript", "AERA"]
+---
+
+
+
+<p>The American Educational Research Association (AERA) annual conference is this weekend in Philadelphia. I was lucky to have a paper accepted into the conference. I am presenting a meta analysis that I have been working on for the past two years or so titled: Model misspecification and assumption violations with the linear mixed model: A meta analysis.</p>
+<p>In this paper, I have compiled numerous monte carlo studies perform a quantitative synthesis of the literature. I have focused primarily on longitudinal linear mixed models as that was what my dissertation topic, and practically speaking, I already had many monte carlo studies in hand making the task a bit simpler.</p>
+<p>Here is a sneak peak of some of the results from my paper in the form of an interactive chart using the <em>rChart</em> package to get started. Here is my r code to generate the initial chart:</p>
+<pre class="r"><code>library(rCharts)
+h1 &lt;- hPlot(x = &quot;fitSerCor2&quot;, y = &quot;avgt1e&quot;, group = &quot;missRE&quot;, data = intmean)
+h1$yAxis(title = list(text = &quot;Empirical Type I Error Rate&quot;), min = 0.00, max = 0.2, tickInterval = 0.05)
+h1$xAxis(title = list(text = &quot;Fitted Serial Correlation Structure&quot;),
+         categories = c(&quot;Ind&quot;, &quot;AR1&quot;, &quot;MA1&quot;, &quot;MA2&quot;, &quot;ARMA&quot;))
+h1$legend(verticalAlign = &quot;top&quot;, align = &quot;right&quot;, layout = &quot;vertical&quot;, title = list(text = &quot;Miss RE&quot;))
+h1$print(&#39;chart1&#39;, include_assets = TRUE, cdn = TRUE)</code></pre>
+<p>As in one of my prior posts about <em>rCharts</em> I manually added a few features to the Javascript manually. I find that easier than bundling lists upon lists to achieve the desired result. Below is the final image:</p>
+<script type='text/javascript' src=http://code.jquery.com/jquery-1.9.1.min.js></script>
+<script type='text/javascript' src=http://code.highcharts.com/highcharts.js></script>
+<script type='text/javascript' src=http://code.highcharts.com/highcharts-more.js></script>
+<script type='text/javascript' src=http://code.highcharts.com/modules/exporting.js></script>
+<style>
+  .rChart {
+    display: block;
+    margin-left: auto; 
+    margin-right: auto;
+    width: 800px;
+    height: 600px;
+    font-size: 200%;
+  }  
+  </style>
+<div id="chart1" class="rChart highcharts">
+
+</div>
+<script type='text/javascript'>
+    (function($){
+        $(function () {
+            var chart = new Highcharts.Chart({
+ "dom": "chart1",
+"width":            800,
+"height":            400,
+"credits": {
+ "href": null,
+"text": null 
+},
+"exporting": {
+ "enabled": false 
+},
+"title": {
+ "text": null 
+},
+"yAxis": [
+ {
+ "title": {
+ "text": "Empirical Type I Error Rate",
+   style: {
+   fontWeight: 'bold',
+   fontSize: '20px'
+   }
+},
+labels: {
+  style: {
+   fontSize: '18px'
+  }
+ },
+"min":              0,
+"max":            0.2,
+"tickInterval":           0.05 
+} 
+],
+"series": [
+ {
+ "data": [
+ [
+ "Ind",
+0.0519
+],
+ [
+ "AR1",
+0.0635
+],
+[
+ "MA1",
+0.0639
+],
+[
+ "MA2",
+0.0665
+], 
+[
+ "ARMA",
+0.0656
+],
+],
+events: {
+            mouseOver: function () {
+                this.update({
+                    color: 'black'
+                });                
+            },
+            mouseOut: function () {
+                this.update({
+                    color: '#e41a1c'
+                }); 
+            }
+        },
+"color": "#e41a1c",
+"name": "0",
+"type": null,
+"marker": {
+ "radius":              6
+} 
+},
+{
+ "data": [
+ [
+ "Ind",
+0.1837
+],
+ [
+ "AR1",
+0.0864
+],
+[
+ "MA1",
+0.1155
+],
+[
+ "MA2",
+0.0999
+], 
+[
+ "ARMA",
+0.0896
+],
+],
+events: {
+            mouseOver: function () {
+                this.update({
+                    color: 'black'
+                });                
+            },
+            mouseOut: function () {
+                this.update({
+                    color: '#377eb8'
+                }); 
+            }
+        },
+"color": "#377eb8",
+"name": "1",
+"type": null,
+"marker": {
+ "radius":              6
+} 
+} 
+],
+"xAxis": [
+ {
+ "title": {
+ "text": "Fitted Serial Correlation Structure",
+ style:{
+   fontWeight: 'bold',
+   fontSize: '20px'
+ }
+},
+labels: {
+ style: {
+  fontSize: '18px',
+  fontWeight: 'bold'
+ }
+},
+"categories": [ "Ind", "AR1", "MA1", "MA2", "ARMA" ] 
+} 
+],
+"subtitle": {
+ "text": null 
+},
+"legend": {
+ "verticalAlign": "top",
+"align": "right",
+"layout": "vertical",
+symbolWidth: 40,
+"title": {
+ "text": "Miss RE" 
+} 
+},
+"plotOptions": {
+ "series": {
+ "lineWidth":              4 
+} 
+},
+"id": "chart1",
+"chart": {
+ "renderTo": "chart1",
+  zoomType: "y",
+   "style": {
+ fontSize: "24px"
+ },
+ resetZoomButton: {
+  position: {
+   align: 'left'
+  }
+ }
+} 
+});
+        });
+    })(jQuery);
+</script>
+<p>If anyone is attending AERA this year and wants to listen to my presentation as well as others dealing with Methodological Considerations in Modeling Latent Growth (the title of the session) stop by the Convention Center on Sunday, April 6th from 4:05 to 5:35 pm in room 117. Even if you do not want to hear about modeling latent growth, but would rather talk about r, perhaps we can meetup somewhere else.</p>

@@ -1,0 +1,63 @@
+---
+title: "When I use `plyr`/`dplyr`"
+author: "Brandon LeBeau"
+date: 2014-01-24
+categories: ["R"]
+tags: ["plyr", "dplyr"]
+---
+
+
+
+<p>My last post I talked about how I use the <em>data.table</em> package for aggregating and removing duplicate observations. Although I use the <em>data.table</em> package quite often, there are many times when I use <em>plyr</em> (and now the new <em>dplyr</em>) package, primarily because of its easy, intuitive syntax.</p>
+<div id="arrange" class="section level3">
+<h3>Arrange</h3>
+<p>One of my personal favorite functions in the <em>plyr</em> suite of basic functions is the <em>arrange</em> function. The base functions for sorting/ordering are more difficult to use. Not to mention there have been many times that I have used the <em>base::sort</em> function when I really need to use the <em>base::order</em> function (sort to me is the word I think of first). <em>arrange</em> is great due to the easy, general syntax used for it as shown below:</p>
+<pre class="r"><code>library(dplyr)
+arrange(dataframe, col1, col2, col3)</code></pre>
+<p>When using the <em>base::order</em> function, this needs to be done through the indexing operators and is not nearly as intuitive to me. I always have to think for a second to get it right. Here are two general examples:</p>
+<pre class="r"><code>dataframe[order(dataframe$col1, dataframe$col2, dataframe$col3), ]
+with(dataframe, dataframe[order(col1, col2, col3), ])</code></pre>
+<p>Both involve much more typing and are more difficult to read the code in my opinion.</p>
+</div>
+<div id="simple-intuitive-syntax" class="section level3">
+<h3>Simple, Intuitive syntax</h3>
+<p>The other aspect of the <em>plyr</em> (and <em>dplyr</em>) suite of functions that keeps me coming back is their simple, intuitive syntax. For example, if I am teaching a student how to aggregate or sort, <em>plyr</em> is my go to package. Easy to explain, easy to understand. The common structure across all of the functions is brilliantly programmed and a standard for everyone else to replicate.</p>
+</div>
+<div id="new-bonus-use-with-dplyr" class="section level3">
+<h3>New bonus use with <em>dplyr</em></h3>
+<p>The new ability to use the <em>chain</em> function or alternatively the <em>%&gt;%</em> operator is a great addition to R. One of the difficulties with code readability in R is the whenever functions are nested together. By default R interprets from inside to out, not how most of us read written words let along code. The <em>chain</em> function and <em>%&gt;%</em> operator allows the user to write the functions in the order they will be processed by R, therefore the code can read from left to right.</p>
+<p>Using the mtcars dataset, suppose we wanted to select the columns we wanted, aggregate the miles per gallon, and filter so we select the average miles per gallon greater than 20.</p>
+<pre class="r"><code>library(dplyr)
+mtcars %&gt;% 
+  group_by(cyl, am) %&gt;%
+  select(mpg, cyl, wt, am) %&gt;%
+  summarise(avgmpg = mean(mpg), avgwt = mean(wt)) %&gt;%
+  filter(avgmpg &gt; 20)</code></pre>
+<pre><code>## # A tibble: 3 x 4
+## # Groups:   cyl [2]
+##     cyl    am   avgmpg   avgwt
+##   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+## 1     4     0 22.90000 2.93500
+## 2     4     1 28.07500 2.04225
+## 3     6     1 20.56667 2.75500</code></pre>
+<p>Compare the above syntax to:</p>
+<pre class="r"><code>filter(
+  summarise(
+    select(
+      group_by(mtcars, cyl, am),
+      mpg, cyl, wt, am),
+    avgmpg = mean(mpg), avgwt = mean(wt)),
+  avgmpg &gt; 20)</code></pre>
+<pre><code>## # A tibble: 3 x 4
+## # Groups:   cyl [2]
+##     cyl    am   avgmpg   avgwt
+##   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+## 1     4     0 22.90000 2.93500
+## 2     4     1 28.07500 2.04225
+## 3     6     1 20.56667 2.75500</code></pre>
+<p>Both chunks give you the same result, however the first one is much easier to see the process taken to get to the end result. Much easier to adapt the code to add/remove parts of it.</p>
+</div>
+<div id="conclusion" class="section level3">
+<h3>Conclusion</h3>
+<p>I use both <em>data.table</em> and <em>plyr</em>/<em>dplyr</em> packages. All of these packages are a great tool to for certian data problems. If I want to write a single line of code to do a lot of manipulations I will revert toward <em>data.table</em>. However, if I am writing code where I am doing more exploration or if I am collaborating with others I tend to write my code using <em>plyr</em>/<em>dplyr</em>. The versatility that both packages bring together in tandem is a great combination. I do not have time to be a complete package elitest, the correct tool for the right data problem.</p>
+</div>

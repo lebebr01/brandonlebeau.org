@@ -1,0 +1,76 @@
+---
+title: "Picking a gui interface for R"
+author: "Brandon LeBeau"
+date: 2014-02-02
+categories: ["R"]
+tags: ["gui"]
+---
+
+
+
+<p>Recently I decided to switch statistical programs used for the master’s level introductory statistics course I teach here at the University of Arkansas. Historically this course has been taught with SPSS, but I am attempting the switch to R this semester.</p>
+<p>My reasons for having students use the gui interface is primarily due to the lack of programming experience. A brief initial poll revealed that only one student had prior programming/code writing experience. Therefore, I did not want to have students become acclimated to the statistics content as well as the R code. The two primary gui systems/packages I explored were the <em>Deducer</em> package and <em>Rcmdr</em> package. Here are my initial thoughts on the switch.</p>
+<div id="which-gui-to-use" class="section level3">
+<h3>Which gui to use?</h3>
+<p>This ultimately comes down to personal preference, however below I’ve highlighted my thoughts on pros/cons of each package.</p>
+</div>
+<div id="deducer" class="section level1">
+<h1>Deducer</h1>
+<table>
+<thead>
+<tr class="header">
+<th>Pros</th>
+<th>Cons</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Shows syntax of commands run</td>
+<td>Uses Java</td>
+</tr>
+<tr class="even">
+<td>Uses ggplot2 for plots</td>
+<td>Menus differ from PC to MAC</td>
+</tr>
+<tr class="odd">
+<td>Very interactive menu structures</td>
+<td>rJava package can be troublesome</td>
+</tr>
+<tr class="even">
+<td>Simple condensed data loading</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="rcmdr" class="section level1">
+<h1>Rcmdr</h1>
+<table>
+<thead>
+<tr class="header">
+<th>Pros</th>
+<th>Cons</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Shows syntax of commands run</td>
+<td>Uses base graphics</td>
+</tr>
+<tr class="even">
+<td>Does not use Java</td>
+<td>Data loading structures not integrated</td>
+</tr>
+<tr class="odd">
+<td>Very similar data menus across OS</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>In general I prefer the <em>Deducer</em> package as it uses ggplot2 and has a more unified menu structure. For example, there are not differing menu options for loading data like in <em>Rcmdr</em>. Instead, <em>Deducer</em> has a single load data menu where it is possible to load many types of data including csv, txt, rda, etc. This is helpful for students who are not very familiar with differing file types. <em>Deducer</em> also uses ggplot2 for its graphics which I enjoy much more than base graphics. In my opinion they look better and the syntax is ultimately easier to create high quality graphics.</p>
+<p>My biggest complaint of the <em>Deducer</em> package is that it uses Java. This is one more thing that the user needs to install and with my class we have had trouble on a few computers getting the <em>rJava</em> package to work properly. In general it is difficult to troubleshoot a student’s computer, especially when I am unable to recreate the problem on my own machine. Lastly, the differing look of <em>Deducer</em> has made it more difficult for me as I need to have two explanations, one for those on a PC and another for those on a Mac. Just tedious and has been difficult for me as I do not use Mac.</p>
+<div id="concluding-thoughts" class="section level3">
+<h3>Concluding thoughts</h3>
+<p>I hope to write more about my experiences using both gui systems for my class, but upon initial inspection of them now I definitely prefer <em>Deducer</em>. The package just has not completely won me over as little problems have made me use both packages in my class so far. Does anyone else have experience using one or the other in a class before? I’d enjoy hearing any stories using these or different gui systems for R.</p>
+</div>
+</div>

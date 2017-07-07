@@ -1,0 +1,34 @@
+---
+title: "Formatting Markdown Table with R"
+author: "Brandon LeBeau"
+date: 2013-11-18
+tags: ["R"]
+categories: ["markdown", "LaTeX", "slidy"]
+---
+
+
+
+<p>This past August I took an opportunity to step back into the University academic world as a <a href="http://http://coehp.uark.edu/12216.php">Visiting Assistant Professor</a> at the <a href="http://www.uark.edu">University of Arkansas</a>. I have enjoyed the transition back into the academic world, including a more flexible schedule, variation in topics/duties, and collaborating with colleagues.</p>
+<p>However, there has been some growing pains, especially regarding creating my own slides for the courses I teach. Although I am using the same books/curriculum used in previous semesters, I am making my own slides and adding my own pieces as I see fit. In addition, I do not use powerpoint, which all of the existing slides are in. Therefore, I am creating my own versions of the slides using a combination of <a href="http://www.r-project.org/">R</a>, <a href="http://yihui.name/knitr/">knitr</a>, <a href="http://daringfireball.net/projects/markdown/">markdown</a>, <a href="http://johnmacfarlane.net/pandoc/">pandoc</a>, <a href="http://www.w3.org/Talks/Tools/Slidy2/">slidy</a>, and <a href="http://www.latex-project.org/">LaTeX</a>. Below is my general process of making my slides and the slides I put online for students to have access to.</p>
+<div id="step-1---create-source-file" class="section level2">
+<h2>Step 1 - Create Source File</h2>
+<p>I start with a <em>Rmd</em> file. This allows me to embed R code into the source document. This is particularly useful for me to include plots of distributions, graphically showing how ANOVA works, etc. Once I am finished editing my <em>Rmd</em>, if I am using <a href="http://www.rstudio.com/">Rstudio</a> I just use the <em>Knit HTML</em> button to automatically generate the markdown and HTML file for me. Alternatively, the <em>knit</em> command from the <strong>knitr</strong> package will create the markdown file for you (but not the HTML file, although for me the HTML file is not needed in this step). The defaults of the <em>knit</em> command work fine for me.</p>
+<pre class="r"><code>knit(input = &#39;/path/to/file.Rmd&#39;, output = &#39;/path/to/file.md&#39;)</code></pre>
+</div>
+<div id="step-2---create-html-presentation" class="section level2">
+<h2>Step 2 - Create HTML Presentation</h2>
+<p>Once we have the markdown file, I now use pandoc to create my HTML presentation. There are a few ways to create HTML presentation slides, but I personally like slidy the best. I like slidy because it easily fills the whole screen and also allows for content to go over the edges of the slide. If content goes outside of the edges of a single slide, you can scroll to see the missing content. I find this useful if I want to blow up an image or have two plots where I can show one then scroll to the second. The pandoc command I use looks something like this:</p>
+<p>pandoc -s –mathjax -i -t slidy inputfile.md -o outfile.html</p>
+</div>
+<div id="step-3-optional---edit-css-for-html-presentation" class="section level2">
+<h2>Step 3 (Optional) - Edit CSS for HTML Presentation</h2>
+<p>I use a custom CSS file to style my HTML presentation so it uses some of the official colors from the University of Arkansas. For example, my header titles use the Arkansas red. To use a custom CSS file, you just need to find the line that mentions CSS in the HTML file and change it to reflect your custom file. The defaults look good, although perhaps slightly bland.</p>
+</div>
+<div id="step-4---create-pdf-slides" class="section level2">
+<h2>Step 4 - Create pdf slides</h2>
+<p>I then create a different set of slides using LaTeX that I post on the blackboard site for each of my courses. Pandoc is how I get the <em>tex</em> file to compile with LaTeX. The command is very simple:</p>
+<p>pandoc -s inputfile.md -o outfile.tex</p>
+<p>Two things I change, I make sure the base text size is 12 pt. I also make sure to use the <em>float</em> package and change any figure positions from <em>htbp</em> to <em>H</em> which forces the figures to stay in position and not float around. Then I compile the resulting <em>tex</em> using Rstudio or from the command line with:</p>
+<p>pdflatex -interaction=nonstopmode -synctex=1 outfile.tex</p>
+<p>In my opinion this creates great looking html presentations that are highly customizable. One thing to note is that by default to get the slideshow, you need to be connected to the internet. Both <strong>slidy</strong> and <strong>mathjax</strong> refer to javascript files that are on downloaded directly from the web. You should be able to download these files, store them locally, and refer to the local versions.</p>
+</div>

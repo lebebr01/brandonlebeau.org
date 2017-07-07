@@ -1,0 +1,700 @@
+---
+title: "rCharts in slidy"
+author: "Brandon LeBeau"
+date: 2014-03-03
+categories: ["R"]
+tags: ["rCharts", "javascript", "html", "slidy"]
+---
+
+
+
+<p>My last post I talked about using <code>rCharts</code> to create interactive graphics for my presentation. They seemed to go over pretty well in my interviews and helped me greatly as I did not need to remember or write down specific numbers to talk about. I use <em>slidy</em> to create my HTML slideshows and there was some interest to see exactly how I had these charts into a <em>slidy</em> html presentation.</p>
+<p>First off, I did not use <code>rCharts</code> and <code>knitr</code> in tandem, but that would make the workflow a bit easier. The major thing you’d want to remember is to make sure to add the following chunk option: <code>results = 'asis'</code>. This will ensure that the raw html printed from <code>rCharts</code> will be included in the markdown file as is.</p>
+<p>I personally just copy and pasted the javascript into my markdown presentation. This was easier for me as I edited many specific options in the raw Javascript to come to my final version. It would be possible to make all the edits directly through the <code>rCharts</code> framework, but it was easier for me to just look at the highcharts.js documentation to get the figure I was looking for.</p>
+<p>For those who did not see my last post, here is the R code I used to create my graphic:</p>
+<pre class="r"><code>library(rCharts)
+
+h1 &lt;- hPlot(x = &quot;GenSerCor&quot;, y = &quot;percent&quot;, group = &quot;FitSerCor&quot;, data = converge)
+h1$yAxis(title = list(text = &quot;Convergence Rate&quot;), min = 0, max = 100, tickInterval = 10)
+h1$xAxis(title = list(text = &quot;Generated Serial Correlation Structure&quot;),
+         categories = c(&quot;Ind&quot;, &quot;AR1&quot;, &quot;MA1&quot;, &quot;MA2&quot;, &quot;ARMA&quot;))
+h1$legend(verticalAlign = &quot;top&quot;, align = &quot;right&quot;, layout = &quot;vertical&quot;, title = list(text = &quot;Fitted SC&quot;))
+h1$plotOptions(series = list(lineWidth = 4))
+h1$print(&#39;chart1&#39;, include_assets = TRUE, cdn = TRUE)</code></pre>
+<p>After I ran this command in R, I edited the resulting Javascript code that was printed from the last line of the R code above. My final Javascript code can be seen below.</p>
+<script type='text/javascript' src=http://code.jquery.com/jquery-1.9.1.min.js></script>
+<script type='text/javascript' src=http://code.highcharts.com/highcharts.js></script>
+<script type='text/javascript' src=http://code.highcharts.com/highcharts-more.js></script>
+<script type='text/javascript' src=http://code.highcharts.com/modules/exporting.js></script>
+<style>
+  .rChart {
+    display: block;
+    margin-left: auto; 
+    margin-right: auto;
+    width: 800px;
+    height: 400px;
+    font-size: 200%;
+  }  
+  </style>
+<div id="chart1" class="rChart highcharts">
+
+</div>
+<script type='text/javascript'>
+    (function($){
+        $(function () {
+            var chart = new Highcharts.Chart({
+ "dom": "chart1",
+"width":            800,
+"height":            400,
+"credits": {
+ "href": null,
+"text": null 
+},
+"exporting": {
+ "enabled": false 
+},
+"title": {
+ "text": null 
+},
+"yAxis": [
+ {
+ title: {
+ text: "Convergence Rate",
+  style: {
+   fontWeight: 'bold',
+   fontSize: '20px'
+   }
+ },
+ labels: {
+  formatter: function() {
+   return this.value + '%';
+  },
+  style: {
+   fontSize: '18px'
+  }
+ },
+"min":              0,
+"max":            100,
+"tickInterval":             10 ,
+minRange: 10
+} 
+],
+"series": [
+ {
+ "data": [
+ [
+ "Ind",
+         68.38 
+],
+[
+ "AR1",
+         64.88 
+],
+[
+ "MA1",
+         55.12 
+],
+[
+ "MA2",
+         61.98 
+],
+[
+ "ARMA",
+         42.17 
+] 
+],
+events: {
+            mouseOver: function () {
+                this.update({
+                    color: 'black'
+                });                
+            },
+            mouseOut: function () {
+                this.update({
+                    color: '#e41a1c'
+                }); 
+            }
+        },
+"color": "#e41a1c",
+"name": "AR1",
+"type": null,
+dashStyle: 'Solid',
+"marker": {
+ "radius":              6
+} 
+},
+{
+ "data": [
+ [
+ "Ind",
+          65.1 
+],
+[
+ "AR1",
+         60.45 
+],
+[
+ "MA1",
+         63.68 
+],
+[
+ "MA2",
+         54.88 
+],
+[
+ "ARMA",
+          63.6 
+] 
+],
+events: {
+            mouseOver: function () {
+                this.update({
+                    color: 'black'
+                });                
+            },
+            mouseOut: function () {
+                this.update({
+                    color: '#377eb8'
+                }); 
+            }
+        },
+"color": "#377eb8",
+"name": "ARMA",
+"type": null,
+dashStyle: 'ShortDash',
+"marker": {
+ "radius":              6 
+} 
+},
+{
+ "data": [
+ [
+ "Ind",
+         72.48 
+],
+[
+ "AR1",
+         93.88 
+],
+[
+ "MA1",
+         92.23 
+],
+[
+ "MA2",
+         95.62 
+],
+[
+ "ARMA",
+         98.37 
+] 
+],
+events: {
+            mouseOver: function () {
+                this.update({
+                    color: 'black'
+                });                
+            },
+            mouseOut: function () {
+                this.update({
+                    color: '#4daf4a'
+                }); 
+            }
+        },
+"color": "#4daf4a",
+"name": "Ind",
+"type": null,
+dashStyle: 'Dash',
+"marker": {
+ "radius":              6 
+} 
+},
+{
+ "data": [
+ [
+ "Ind",
+         71.02 
+],
+[
+ "AR1",
+         81.37 
+],
+[
+ "MA1",
+         69.15 
+],
+[
+ "MA2",
+          84.5 
+],
+[
+ "ARMA",
+         88.02 
+] 
+],
+events: {
+            mouseOver: function () {
+                this.update({
+                    color: 'black'
+                });                
+            },
+            mouseOut: function () {
+                this.update({
+                    color: '#984ea3'
+                }); 
+            }
+        },
+"color": "#984ea3",
+"name": "MA1",
+"type": null,
+dashStyle: 'ShortDot',
+"marker": {
+ "radius":              6
+} 
+},
+{
+ "data": [
+ [
+ "Ind",
+         67.23 
+],
+[
+ "AR1",
+         70.78 
+],
+[
+ "MA1",
+         65.93 
+],
+[
+ "MA2",
+         68.83 
+],
+[
+ "ARMA",
+          72.9 
+] 
+],
+events: {
+            mouseOver: function () {
+                this.update({
+                    color: 'black'
+                });                
+            },
+            mouseOut: function () {
+                this.update({
+                    color: '#ff7f00'
+                }); 
+            }
+        },
+"color": "#ff7f00",
+"name": "MA2",
+"type": null,
+dashStyle: 'DashDot',
+"marker": {
+ "radius":              6 
+} 
+} 
+],
+"xAxis": [
+ {
+ title: {
+ text: "Generated Serial Correlation Structure",
+  style:{
+   fontWeight: 'bold',
+   fontSize: '20px'
+ }
+},
+labels: {
+ style: {
+  fontSize: '18px',
+  fontWeight: 'bold'
+ }
+},
+"categories": [ "Ind", "AR1", "MA1", "MA2", "ARMA" ] 
+} 
+],
+"subtitle": {
+ "text": null 
+},
+"legend": {
+ "verticalAlign": "top",
+"align": "right",
+"layout": "vertical",
+symbolWidth: 40,
+"title": {
+ "text": "Fitted SC" 
+} 
+},
+"plotOptions": {
+ "series": {
+ "lineWidth":              4 
+} 
+},
+"id": "chart1",
+"chart": {
+ "renderTo": "chart1", 
+ zoomType: "y",
+ "style": {
+ fontSize: "24px"
+ },
+ resetZoomButton: {
+  position: {
+   align: 'left'
+  }
+ }
+} 
+});
+        });
+    })(jQuery);
+</script>
+<p>Once you have that in markdown format, you can turn it into a <em>slidy</em> html presentation with the following command in <em>pandoc</em>:</p>
+<pre class="bash"><code>pandoc -s --mathjax -i -t slidy inputfile.md -o outfile.html</code></pre>
+<p>This gives you a file that looks something like this:</p>
+<pre class="html"><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot;
+ &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt;
+&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;
+&lt;head&gt;
+  &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot; /&gt;
+  &lt;meta http-equiv=&quot;Content-Style-Type&quot; content=&quot;text/css&quot; /&gt;
+  &lt;meta name=&quot;generator&quot; content=&quot;pandoc&quot; /&gt;
+  &lt;meta name=&quot;author&quot; content=&quot;Brandon LeBeau&quot; /&gt;
+  &lt;title&gt;Impact of serial correlation structures on random effect misspecification with the linear mixed model.&lt;/title&gt;
+  &lt;style type=&quot;text/css&quot;&gt;code{white-space: pre;}&lt;/style&gt;
+  &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; media=&quot;screen, projection, print&quot;
+    href=&quot;stylesheets/slidy.css&quot; /&gt;
+&lt;script src=&quot;stylesheets/slidy.js&quot; charset=&quot;utf-8&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+&lt;script type=&#39;text/javascript&#39; src=stylesheets/jquery-1.9.1.min.js&gt;&lt;/script&gt;
+&lt;script type=&#39;text/javascript&#39; src=stylesheets/highcharts.js&gt;&lt;/script&gt;
+&lt;script type=&#39;text/javascript&#39; src=stylesheets/highcharts-more.js&gt;&lt;/script&gt;
+&lt;script type=&#39;text/javascript&#39; src=stylesheets/exporting.js&gt;&lt;/script&gt; 
+ &lt;style&gt;
+  .rChart {
+    display: block;
+    margin-left: auto; 
+    margin-right: auto;
+    width: 1000px;
+    height: 800px;
+    font-size: 200%;
+  }  
+  &lt;/style&gt;
+&lt;script src=&quot;http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML&quot; type=&quot;text/javascript&quot;&gt;MathJax.Hub.Queue([&quot;Typeset&quot;,MathJax.Hub]);&lt;/script&gt;
+ &lt;!--   &lt;script src=&quot;http://www.w3.org/Talks/Tools/Slidy2/scripts/slidy.js&quot;
+    charset=&quot;utf-8&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt; --&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id = &#39;chart1&#39; class = &#39;rChart&#39;&gt;&lt;/div&gt;
+&lt;script type=&#39;text/javascript&#39;&gt;
+    (function($){
+        $(function () {
+            var chart = new Highcharts.Chart({
+ &quot;dom&quot;: &quot;chart1&quot;,
+&quot;width&quot;:            1000,
+&quot;height&quot;:            600,
+&quot;credits&quot;: {
+ &quot;href&quot;: null,
+&quot;text&quot;: null 
+},
+&quot;exporting&quot;: {
+ &quot;enabled&quot;: false 
+},
+&quot;title&quot;: {
+ &quot;text&quot;: null 
+},
+&quot;yAxis&quot;: [
+ {
+ title: {
+ text: &quot;Convergence Rate&quot;,
+  style: {
+   fontWeight: &#39;bold&#39;,
+   fontSize: &#39;20px&#39;
+   }
+ },
+ labels: {
+  formatter: function() {
+   return this.value + &#39;%&#39;;
+  },
+  style: {
+   fontSize: &#39;18px&#39;
+  }
+ },
+&quot;min&quot;:              0,
+&quot;max&quot;:            100,
+&quot;tickInterval&quot;:             10 ,
+minRange: 10
+} 
+],
+&quot;series&quot;: [
+ {
+ &quot;data&quot;: [
+ [
+ &quot;Ind&quot;,
+         68.38 
+],
+[
+ &quot;AR1&quot;,
+         64.88 
+],
+[
+ &quot;MA1&quot;,
+         55.12 
+],
+[
+ &quot;MA2&quot;,
+         61.98 
+],
+[
+ &quot;ARMA&quot;,
+         42.17 
+] 
+],
+events: {
+            mouseOver: function () {
+                this.update({
+                    color: &#39;black&#39;
+                });                
+            },
+            mouseOut: function () {
+                this.update({
+                    color: &#39;#e41a1c&#39;
+                }); 
+            }
+        },
+&quot;color&quot;: &quot;#e41a1c&quot;,
+&quot;name&quot;: &quot;AR1&quot;,
+&quot;type&quot;: null,
+dashStyle: &#39;Solid&#39;,
+&quot;marker&quot;: {
+ &quot;radius&quot;:              6
+} 
+},
+{
+ &quot;data&quot;: [
+ [
+ &quot;Ind&quot;,
+          65.1 
+],
+[
+ &quot;AR1&quot;,
+         60.45 
+],
+[
+ &quot;MA1&quot;,
+         63.68 
+],
+[
+ &quot;MA2&quot;,
+         54.88 
+],
+[
+ &quot;ARMA&quot;,
+          63.6 
+] 
+],
+events: {
+            mouseOver: function () {
+                this.update({
+                    color: &#39;black&#39;
+                });                
+            },
+            mouseOut: function () {
+                this.update({
+                    color: &#39;#377eb8&#39;
+                }); 
+            }
+        },
+&quot;color&quot;: &quot;#377eb8&quot;,
+&quot;name&quot;: &quot;ARMA&quot;,
+&quot;type&quot;: null,
+dashStyle: &#39;ShortDash&#39;,
+&quot;marker&quot;: {
+ &quot;radius&quot;:              6 
+} 
+},
+{
+ &quot;data&quot;: [
+ [
+ &quot;Ind&quot;,
+         72.48 
+],
+[
+ &quot;AR1&quot;,
+         93.88 
+],
+[
+ &quot;MA1&quot;,
+         92.23 
+],
+[
+ &quot;MA2&quot;,
+         95.62 
+],
+[
+ &quot;ARMA&quot;,
+         98.37 
+] 
+],
+events: {
+            mouseOver: function () {
+                this.update({
+                    color: &#39;black&#39;
+                });                
+            },
+            mouseOut: function () {
+                this.update({
+                    color: &#39;#4daf4a&#39;
+                }); 
+            }
+        },
+&quot;color&quot;: &quot;#4daf4a&quot;,
+&quot;name&quot;: &quot;Ind&quot;,
+&quot;type&quot;: null,
+dashStyle: &#39;Dash&#39;,
+&quot;marker&quot;: {
+ &quot;radius&quot;:              6 
+} 
+},
+{
+ &quot;data&quot;: [
+ [
+ &quot;Ind&quot;,
+         71.02 
+],
+[
+ &quot;AR1&quot;,
+         81.37 
+],
+[
+ &quot;MA1&quot;,
+         69.15 
+],
+[
+ &quot;MA2&quot;,
+          84.5 
+],
+[
+ &quot;ARMA&quot;,
+         88.02 
+] 
+],
+events: {
+            mouseOver: function () {
+                this.update({
+                    color: &#39;black&#39;
+                });                
+            },
+            mouseOut: function () {
+                this.update({
+                    color: &#39;#984ea3&#39;
+                }); 
+            }
+        },
+&quot;color&quot;: &quot;#984ea3&quot;,
+&quot;name&quot;: &quot;MA1&quot;,
+&quot;type&quot;: null,
+dashStyle: &#39;ShortDot&#39;,
+&quot;marker&quot;: {
+ &quot;radius&quot;:              6
+} 
+},
+{
+ &quot;data&quot;: [
+ [
+ &quot;Ind&quot;,
+         67.23 
+],
+[
+ &quot;AR1&quot;,
+         70.78 
+],
+[
+ &quot;MA1&quot;,
+         65.93 
+],
+[
+ &quot;MA2&quot;,
+         68.83 
+],
+[
+ &quot;ARMA&quot;,
+          72.9 
+] 
+],
+events: {
+            mouseOver: function () {
+                this.update({
+                    color: &#39;black&#39;
+                });                
+            },
+            mouseOut: function () {
+                this.update({
+                    color: &#39;#ff7f00&#39;
+                }); 
+            }
+        },
+&quot;color&quot;: &quot;#ff7f00&quot;,
+&quot;name&quot;: &quot;MA2&quot;,
+&quot;type&quot;: null,
+dashStyle: &#39;DashDot&#39;,
+&quot;marker&quot;: {
+ &quot;radius&quot;:              6 
+} 
+} 
+],
+&quot;xAxis&quot;: [
+ {
+ title: {
+ text: &quot;Generated Serial Correlation Structure&quot;,
+  style:{
+   fontWeight: &#39;bold&#39;,
+   fontSize: &#39;20px&#39;
+ }
+},
+labels: {
+ style: {
+  fontSize: &#39;18px&#39;,
+  fontWeight: &#39;bold&#39;
+ }
+},
+&quot;categories&quot;: [ &quot;Ind&quot;, &quot;AR1&quot;, &quot;MA1&quot;, &quot;MA2&quot;, &quot;ARMA&quot; ] 
+} 
+],
+&quot;subtitle&quot;: {
+ &quot;text&quot;: null 
+},
+&quot;legend&quot;: {
+ &quot;verticalAlign&quot;: &quot;top&quot;,
+&quot;align&quot;: &quot;right&quot;,
+&quot;layout&quot;: &quot;vertical&quot;,
+symbolWidth: 40,
+&quot;title&quot;: {
+ &quot;text&quot;: &quot;Fitted SC&quot; 
+} 
+},
+&quot;plotOptions&quot;: {
+ &quot;series&quot;: {
+ &quot;lineWidth&quot;:              4 
+} 
+},
+&quot;id&quot;: &quot;chart1&quot;,
+&quot;chart&quot;: {
+ &quot;renderTo&quot;: &quot;chart1&quot;, 
+ zoomType: &quot;y&quot;,
+ &quot;style&quot;: {
+ fontSize: &quot;24px&quot;
+ },
+ resetZoomButton: {
+  position: {
+   align: &#39;left&#39;
+  }
+ }
+} 
+});
+        });
+    })(jQuery);
+&lt;/script&gt;
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p>That should give you a html presentation with an interactive Javascript based figure.</p>

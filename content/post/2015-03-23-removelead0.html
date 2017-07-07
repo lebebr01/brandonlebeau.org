@@ -1,0 +1,109 @@
+---
+title: "Remove leading 0 with ggplot2"
+author: "Brandon LeBeau"
+date: 2015-03-23
+categories: ["R"]
+tags: ["graphics", "ggplot2"]
+---
+
+
+
+<p>I recently had an occasion while working on a three variable interaction plot for a paper where I wanted to remove the leading 0’s in the x-axis text labels using <code>ggplot2</code>. This was primarily due to some space concerns I had for the x-axis labels. Unfortunately, I did not find an obvious way to do this in my first go around. After tickering a bit, I’ve found a workaround. The process is walked through below.</p>
+<p>First, some simulated data.</p>
+<pre class="r"><code># Sim some data
+simdata &lt;- data.frame(x = runif(2400, min = .032, max = .210),
+                      y = c(rnorm(2000, mean = 0, sd = .1), 
+                            rnorm(400, mean = 1, sd = .25)),
+                      group = c(sample(1:2, 1600, replace = TRUE),
+                                rep(1, 400), 
+                                rep(2, 400)),
+                      facet = rep(1:3, each = 800))</code></pre>
+<p>As shown below, initially there is no group differences, but there are facet differences. Exploring the interaction between the grouping variables shows there is a two variable interaction. Note: This example is not identical to the three variable interaction I originally described above, but assume here that the x variable is also important.</p>
+<pre class="r"><code>with(simdata, tapply(y, group, mean))</code></pre>
+<pre><code>##           1           2 
+## 0.001554584 0.325795567</code></pre>
+<pre class="r"><code>with(simdata, tapply(y, facet, mean))</code></pre>
+<pre><code>##           1           2           3 
+## 0.003420271 0.001699081 0.491985393</code></pre>
+<pre class="r"><code>with(simdata, tapply(y, interaction(group, facet), mean))</code></pre>
+<pre><code>##           1.1           2.1           1.2           2.2           1.3 
+##  0.0064619763  0.0006125424 -0.0024467716  0.0058657154  0.0008548478 
+##           2.3 
+##  0.9831159380</code></pre>
+<p>In the example in the paper, I aggregated the unique x values to the third decimal place. That is done with the following <code>dplyr</code> code. Note: The data did not need to be aggregated, but it is a bit easier to work with when plotting later.</p>
+<pre class="r"><code># round value to .001 and aggregate
+simdata$x_rd &lt;- round(simdata$x, 3)
+
+# aggregate
+library(dplyr)</code></pre>
+<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 3.4.1</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>simdata_agg &lt;- simdata %&gt;%
+  group_by(x_rd, group, facet) %&gt;%
+  summarise(y = mean(y))
+simdata_agg </code></pre>
+<pre><code>## # A tibble: 968 x 4
+## # Groups:   x_rd, group [?]
+##     x_rd group facet           y
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;       &lt;dbl&gt;
+##  1 0.032     1     1 -0.00931448
+##  2 0.032     2     1 -0.05404198
+##  3 0.032     2     2 -0.07650159
+##  4 0.033     1     1  0.03723959
+##  5 0.033     1     2 -0.02394749
+##  6 0.033     1     3 -0.07251729
+##  7 0.033     2     1  0.03503479
+##  8 0.033     2     2 -0.02106101
+##  9 0.033     2     3  1.23765114
+## 10 0.034     1     1 -0.10884685
+## # ... with 958 more rows</code></pre>
+<p>Now that the data is aggregated, it can be directly plotted with <code>ggplot2</code>. This is the base plot that contains the leading 0’s by default and treats the x variable as continuous (which it really is continuous).</p>
+<pre class="r"><code>library(ggplot2)
+p &lt;- ggplot(simdata_agg, aes(x = x_rd, y = y, shape = factor(group))) + 
+  theme_bw()
+p + geom_point(size = 3) + facet_grid(. ~ facet) + 
+  scale_x_continuous(&quot;x&quot;, limits = c(0, .25), 
+                     breaks = seq(0, .25, .05))</code></pre>
+<p><img src="/post/2015-03-23-removelead0_files/figure-html/plotwith0-1.png" width="672" /> The plot above is a good start, but I was worried about the x-axis labels being too close together and ultimately being difficult to read. I decided I wanted to omit the leading 0’s to omit some space. This was useful in my scenario as the variable on the x-axis could only take on values between 0 and 1, therefore the leading 0 is not important.</p>
+<p>One way to remove the leading 0 is to convert the continuous variable into a character variable and use a simple regular expression (with <code>gsub</code>) to remove the 0 at the beginning of the character string. Below is the code to do that and also the resulting plot. The key point of the plotting code below is the use of the <code>breaks</code> argument to <code>scale_x_discrete</code>. Without this all the unique character values will be plotted, not good.</p>
+<pre class="r"><code>simdata_agg$x_char &lt;- as.character(simdata_agg$x_rd)
+simdata_agg$x_char &lt;- gsub(&quot;^0&quot;, &quot;&quot;, simdata_agg$x_char)
+p &lt;- ggplot(simdata_agg, aes(x = x_char, y = y, shape = factor(group))) + 
+  theme_bw()
+p + geom_point(size = 3) + facet_grid(. ~ facet) + 
+  scale_x_discrete(&quot;x&quot;, breaks = c(&#39;.00&#39;, &#39;.05&#39;, &#39;.1&#39;, &#39;.15&#39;, &#39;.2&#39;, &#39;.25&#39;))</code></pre>
+<p><img src="/post/2015-03-23-removelead0_files/figure-html/plotno0-1.png" width="672" /></p>
+<p>The plot above has a few flaws. First, there are values at the edge of each facet. This could be fixed with the <code>expand</code> argument to <code>scale_x_discrete</code>, but I still wanted to include the value of .00 on the x-axis. Secondly, the x-axis text labels are not uniformly formatted which is not ideal (e.g. .1 should be .10).</p>
+<p>To fix this, some made up data needs to be added to the data frame. Some care needs to be done here as well as a value of .00 can not just be added to the x variable plotted. This would place a non-uniform gap between .00 and .05 (not shown, but try it for yourself by adapting the code below). Therefore, all values between 0 and .031 need to be manually added to the data frame to keep the spacing uniform. Finally, to not plot the made up values, I created a transparency variable called alpha. This variable was used to set the alpha values to 0 for the made up values and 1 for the real values. <code>scale_alpha_discrete</code> was used to specify the range of alpha values, this is important otherwise the made up numbers will show up as a light gray. The final code to manually add the new data is shown below. Anyone have a less workaround procedure?</p>
+<pre class="r"><code># Reset aggregation vector
+simdata_agg &lt;- simdata %&gt;%
+  group_by(x_rd, group, facet) %&gt;%
+  summarise(y = mean(y))
+
+# Create x_char variable again
+simdata_agg$x_char &lt;- as.character(simdata_agg$x_rd)
+simdata_agg$x_char &lt;- gsub(&quot;^0&quot;, &quot;&quot;, simdata_agg$x_char)
+
+# Needed formatting
+simdata_agg$x_char &lt;- ifelse(simdata_agg$x_char == &#39;&#39;, &#39;.00&#39;,
+                             simdata_agg$x_char)
+simdata_agg$x_char &lt;- ifelse(simdata_agg$x_char == &#39;.2&#39;, &#39;.20&#39;,
+                             simdata_agg$x_char)
+simdata_agg$x_char &lt;- ifelse(simdata_agg$x_char == &#39;.1&#39;, &#39;.10&#39;,
+                             simdata_agg$x_char)
+
+# Final plot
+p &lt;- ggplot(simdata_agg, aes(x = x_char, y = y, shape = factor(group))) + 
+  theme_bw()
+p + geom_point(size = 3) + 
+  facet_grid(. ~ facet) + 
+  scale_x_discrete(&quot;x&quot;, breaks = c(&#39;.00&#39;, &#39;.05&#39;, &#39;.10&#39;, &#39;.15&#39;, &#39;.20&#39;),
+                   expand = c(.05, .05))</code></pre>
+<p><img src="/post/2015-03-23-removelead0_files/figure-html/addmadeupvalues-1.png" width="672" /></p>

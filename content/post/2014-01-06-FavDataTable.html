@@ -1,0 +1,122 @@
+---
+title: "Two of my favorite data.table features"
+author: "Brandon LeBeau"
+date: 2014-01-06
+categories: ["R"]
+tags: ["data.table"]
+---
+
+
+
+<p>When I started to use the <em>data.table</em> package I was primarily using it to aggregate. I had read about <em>data.table</em> and its blazing speed compared to the other options from base or the <em>plyr</em> package especially with large amounts of data. As an example, I remember calculating averages or percentages while at Saint Paul Public Schools and while the calculations were running would walk away for 5 minutes to wait for them to finish. When using <em>data.table</em> to do the same calculations I didn’t need to wait 5 minutes to see the calculated values.</p>
+<p>The speed of <em>data.table</em> is publicized widely, however there are two features found in <em>data.table</em> that are not talked about as frequently that I use very often.</p>
+<div id="add-aggregated-variables-to-the-raw-data-file" class="section level3">
+<h3>Add aggregated variables to the raw data file</h3>
+<p>The ability to add aggregated variables to the raw data file can be very helpful in numerous data situations. At Saint Paul Public Schools I used this feature to give differing levels of data to external clients requesting data. I also used this feature when creating graphics. Outside of the district world, this feature is extremely helpful when fitting linear mixed models with <em>lme4</em> or <em>nlme</em>. Instead of creating a set of aggregated variables in a new data frame and merging back in, <em>data.table</em> allows you to do it one one command. Here is a small example:</p>
+<pre class="r"><code># generate a small dataset
+set.seed(1234)
+smalldat &lt;- data.frame(group1 = rep(1:2, each = 5), 
+                       group2 = rep(c(&#39;a&#39;,&#39;b&#39;), times = 5), 
+                       x = rnorm(10))
+
+# convert to data.frame to data.table
+library(data.table)
+smalldat &lt;- data.table(smalldat)
+
+# convert aggregated variable into raw data file
+smalldat[, aggGroup1 := mean(x), by = group1]
+
+# print file
+smalldat</code></pre>
+<pre><code>##     group1 group2          x  aggGroup1
+##  1:      1      a -1.2070657 -0.3523537
+##  2:      1      b  0.2774292 -0.3523537
+##  3:      1      a  1.0844412 -0.3523537
+##  4:      1      b -2.3456977 -0.3523537
+##  5:      1      a  0.4291247 -0.3523537
+##  6:      2      b  0.5060559 -0.4139612
+##  7:      2      a -0.5747400 -0.4139612
+##  8:      2      b -0.5466319 -0.4139612
+##  9:      2      a -0.5644520 -0.4139612
+## 10:      2      b -0.8900378 -0.4139612</code></pre>
+<pre class="r"><code># aggregate with 2 variables
+smalldat[, aggGroup1.2 := mean(x), by = list(group1, group2)]
+
+# print file
+smalldat</code></pre>
+<pre><code>##     group1 group2          x  aggGroup1 aggGroup1.2
+##  1:      1      a -1.2070657 -0.3523537   0.1021667
+##  2:      1      b  0.2774292 -0.3523537  -1.0341342
+##  3:      1      a  1.0844412 -0.3523537   0.1021667
+##  4:      1      b -2.3456977 -0.3523537  -1.0341342
+##  5:      1      a  0.4291247 -0.3523537   0.1021667
+##  6:      2      b  0.5060559 -0.4139612  -0.3102046
+##  7:      2      a -0.5747400 -0.4139612  -0.5695960
+##  8:      2      b -0.5466319 -0.4139612  -0.3102046
+##  9:      2      a -0.5644520 -0.4139612  -0.5695960
+## 10:      2      b -0.8900378 -0.4139612  -0.3102046</code></pre>
+<p>The key part of the syntax is the <code>:=</code>, which tells <em>data.table</em> to compute an aggregated variable and merge it back into the original data. This is very compact syntax to create aggregated variables that are automatically placed within the original data. The only drawback is the inability to create more than one aggregated variable at a time. If I wanted to created the mean and the median of x for each level of the variable <em>group1</em>, I would have to write two commands. If a lot of variables need to be aggregated in this fashion, it may be more concise to create an aggregated data set and merge back into the original. Below is an example of what I mean by aggregate then merge back:</p>
+<pre class="r"><code>library(plyr)
+
+# create aggregated data
+aggdat1 &lt;- ddply(smalldat, .(group1), summarize,
+                 aggGroup1plyr = mean(x))
+aggdat12 &lt;- ddply(smalldat, .(group1, group2), summarize, 
+                aggGroup1.1plyr = mean(x))
+
+# join back into data
+smalldat &lt;- join(smalldat, aggdat1, by = &#39;group1&#39;)
+smalldat &lt;- join(smalldat, aggdat12, by = c(&#39;group1&#39;, &#39;group2&#39;))
+
+# print data
+smalldat</code></pre>
+<pre><code>##     group1 group2          x  aggGroup1 aggGroup1.2 aggGroup1plyr
+##  1:      1      a -1.2070657 -0.3523537   0.1021667    -0.3523537
+##  2:      1      b  0.2774292 -0.3523537  -1.0341342    -0.3523537
+##  3:      1      a  1.0844412 -0.3523537   0.1021667    -0.3523537
+##  4:      1      b -2.3456977 -0.3523537  -1.0341342    -0.3523537
+##  5:      1      a  0.4291247 -0.3523537   0.1021667    -0.3523537
+##  6:      2      b  0.5060559 -0.4139612  -0.3102046    -0.4139612
+##  7:      2      a -0.5747400 -0.4139612  -0.5695960    -0.4139612
+##  8:      2      b -0.5466319 -0.4139612  -0.3102046    -0.4139612
+##  9:      2      a -0.5644520 -0.4139612  -0.5695960    -0.4139612
+## 10:      2      b -0.8900378 -0.4139612  -0.3102046    -0.4139612
+##     aggGroup1.1plyr
+##  1:       0.1021667
+##  2:      -1.0341342
+##  3:       0.1021667
+##  4:      -1.0341342
+##  5:       0.1021667
+##  6:      -0.3102046
+##  7:      -0.5695960
+##  8:      -0.3102046
+##  9:      -0.5695960
+## 10:      -0.3102046</code></pre>
+<p>The above code using plyr likely won’t take anymore time for R to run, however it does take more time to write out the code.</p>
+</div>
+<div id="removing-duplicate-observations" class="section level3">
+<h3>Removing duplicate observations</h3>
+<p>For most situations, using <em>data.table</em> has become my go to way to remove duplicate observations. This is especially useful when it does not matter which value of the variables you want to keep in the final data set (e.g. when values of the variables are repeated). The ability of <em>data.table</em> to create keyed values makes it extremely easy to remove duplicate observations based on those keyed variables.</p>
+<p>Using the dataset created above:</p>
+<pre class="r"><code># Set keys - this sorts the data based on these values
+setkeyv(smalldat, c(&#39;group1&#39;,&#39;group2&#39;))
+
+# keep unique observations (I also remove the variable x)
+uniqdat &lt;- subset(unique(smalldat), select = -x)
+
+# print data
+uniqdat</code></pre>
+<pre><code>##     group1 group2  aggGroup1 aggGroup1.2 aggGroup1plyr aggGroup1.1plyr
+##  1:      1      a -0.3523537   0.1021667    -0.3523537       0.1021667
+##  2:      1      a -0.3523537   0.1021667    -0.3523537       0.1021667
+##  3:      1      a -0.3523537   0.1021667    -0.3523537       0.1021667
+##  4:      1      b -0.3523537  -1.0341342    -0.3523537      -1.0341342
+##  5:      1      b -0.3523537  -1.0341342    -0.3523537      -1.0341342
+##  6:      2      a -0.4139612  -0.5695960    -0.4139612      -0.5695960
+##  7:      2      a -0.4139612  -0.5695960    -0.4139612      -0.5695960
+##  8:      2      b -0.4139612  -0.3102046    -0.4139612      -0.3102046
+##  9:      2      b -0.4139612  -0.3102046    -0.4139612      -0.3102046
+## 10:      2      b -0.4139612  -0.3102046    -0.4139612      -0.3102046</code></pre>
+<p>The code above first sets two keys for the data.table. The key acts as an identifier and the data are automatically sorted based on the key variables. This is one of the reasons why the <em>data.table</em> package can be so fast at doing many of its tasks. Then unique observations are kept. The <em>unique</em> function in the <em>data.table</em> package is similar to the same function in the base package, but when keys are defined for a data.table, the <em>unique</em> function automatically selects unique observations based on those key variables.</p>
+<p>For more complicated cases, I tend to use a combination of <em>order</em> and <em>duplicated</em> from base R, however for easy cases where observations are repeated on the variables I want to keep, this is a quick and easy way to remove duplicate observations.</p>
+</div>

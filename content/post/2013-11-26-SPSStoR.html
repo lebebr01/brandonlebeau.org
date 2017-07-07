@@ -1,0 +1,73 @@
+---
+title: "SPSStoR An R package to convert SPSS syntax"
+author: "Brandon LeBeau"
+date: 2013-11-26
+categories: ["r"] 
+tags: ["SPSS", "package"]
+---
+
+
+
+<p>My first statistical software package I used as an undergrad was SPSS. I was fortunate during my senior year at <a href="http://www.luther.edu">Luther College</a> to be initially introduced to <a href="http://r-project.org">R</a>. I did not realize it at the time (except for the pretty graphics) that this was the start of something big for me. Fast forward a year to graduate school at the University of Minnesota and the majority of my program was again using SPSS. Under the tutelage of <a href="http://www.cehd.umn.edu/edpsych/people/Faculty/Zieffler.html">Andy</a> in my first graduate statistics course I started to do analyses in both R and SPSS. After that I started to do all my analyses in R. Fast forward five years this time to my first full-time job after graduate school at <a href="http://www.spps.org">Saint Paul Public Schools</a> and again everyone was using SPSS. Fortunately in my year there I was able to significantly push them toward using R more and more.</p>
+<p>This long introduction motivates the following package I started writing mostly just to play with regular expressions, but kept playing and came up with a package with many routines. The package I came up with is called <em>SPSStoR</em> which converts SPSS syntax into R syntax. Using regular expressions to parse the SPSS syntax to figure out which routine is being run then prints out the R syntax to do the same analysis done by the SPSS syntax.</p>
+<p>As you can imagine, the SPSS language has many routines and this is not all encompassing, however it provides many basic commands such as: * Aggregate * Correlations * Crosstab * Sort Cases * Descriptives * One sample t-test * Independent sample t-test * Get for sav files (SPSS data files) * Master SPSStoR function * Graphics * Frequencies</p>
+<table>
+<thead>
+<tr class="header">
+<th>Ex</th>
+<th>am</th>
+<th>pl</th>
+<th>es</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Yo</td>
+<td>u</td>
+<td>ca</td>
+<td>n</td>
+<td>install the package directly from my github page using the devtools library:</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>library(devtools)
+install_github(&quot;SPSStoR&quot;, &quot;lebebr01&quot;)</code></pre>
+<p>Once you install the package, I’ve included some example SPSS syntax within the package to use as examples. One example syntax file reads in an SPSS data file, sorts the file, then computes descriptive statistics on a handful of variables. The following should run the command from your computer:</p>
+<pre class="r"><code>library(SPSStoR)</code></pre>
+<pre><code>## Loading required package: stringr</code></pre>
+<pre class="r"><code>file &lt;- paste(system.file(&#39;SPSSsyntax&#39;, package = &#39;SPSStoR&#39;), 
+              &quot;/getDescExamp.txt&quot;, sep = &#39;&#39;)
+spss_to_r(file)</code></pre>
+<pre><code>## library(haven)
+## x &lt;- read_sav(paste(getwd(),&#39;/data/hubtemp.sav&#39;, sep = &#39;/&#39;))
+## library(dplyr)
+## # x is the name of your data frame
+## x &lt;- arrange(DIVISION, STORE, -AGE)
+## convert_num &lt;- function(x) as.numeric(as.character(x));x[c(&quot;longmon&quot;, &quot;tollmon&quot;, &quot;equipmon&quot;, &quot;cardmon&quot;, &quot;wiremon&quot;, &quot;DESCRIPTIVES&quot;)] &lt;- sapply(x[c(&quot;longmon&quot;, &quot;tollmon&quot;, &quot;equipmon&quot;, &quot;cardmon&quot;, &quot;wiremon&quot;, &quot;DESCRIPTIVES&quot;)], convert_num)
+## x %&gt;% summarise_each(funs(mean(., na.rm = TRUE), sd(., na.rm = TRUE), min(., na.rm = TRUE), max(., na.rm = TRUE)), one_of(&quot;longmon&quot;, &quot;tollmon&quot;, &quot;equipmon&quot;, &quot;cardmon&quot;, &quot;wiremon&quot;, &quot;DESCRIPTIVES&quot;))</code></pre>
+<p>Here is another example doing a one-sample t-test:</p>
+<pre class="r"><code>file &lt;- paste(system.file(&#39;SPSSsyntax&#39;, package = &#39;SPSStoR&#39;), 
+              &quot;/ttestOneSampExamp.txt&quot;, sep = &#39;&#39;)
+spss_to_r(file)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th>Su</th>
+<th>mm</th>
+<th>ar</th>
+<th>y</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Al</td>
+<td>th</td>
+<td>ou</td>
+<td>gh</td>
+<td>some working R knowledge is needed to run this package, such as knowledge of installing packages and what an object is, this package may be useful to those trying to figure out a similar command in R. Over time I hope to slowly add support for more SPSS routines, see my github page for those that I am currently prioritizing. Let me know via the issues on github if you’d like support for a specific routine or run into problems.</td>
+</tr>
+</tbody>
+</table>
+<p>The package home can be found on github: <a href="https://github.com/lebebr01/SPSStoR">SPSStoR</a></p>
