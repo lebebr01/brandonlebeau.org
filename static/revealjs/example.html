@@ -1,66 +1,73 @@
----
-title: "Make Power Fun (Again?)"
-author: "Brandon LeBeau"
-date: "2017-02-24"
-tags: [slides, R, simglm, package]
----
+<!doctype html>
+<html lang="en">
 
-<h1>Make Power Fun (Again?)</h1>
-<h2>Brandon LeBeau</h2>
-<h3>University of Iowa</h3>
+	<head>
+		<meta charset="utf-8">
 
+		<title>reveal.js - Markdown Demo</title>
 
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white.css" id="theme">
 
-# Overview
+        <link rel="stylesheet" href="lib/css/zenburn.css">
+	</head>
+
+	<body>
+
+			<div class="reveal">
+	<div class="slides">
+	<section data-markdown
+	  data-separator="^___">
+	    # Overview
 1. (G)LMMs
 2. Power
 3. `simglm` package
 4. Shiny Demo - Broken!
 
-
+___
 
 # Linear Mixed Model (LMM)
 ![](http://educate-r.org/figs/equations.png)
 
-
+___
 
 # Power
 - Power is the ability to statistically detect a true effect (i.e. non-zero population effect).
 - For simple models (e.g. t-tests, regression) there are closed form equations for generating power.
-    + R has routines for these: `power.t.test, power.anova.test`
-    + Gpower3
+    &#43; R has routines for these: `power.t.test, power.anova.test`
+    &#43; Gpower3
 
-
+___
 
 # Power Example
 
 ```r
-n <- seq(4, 1000, 2)
-power <- sapply(seq_along(n), function(i) 
-  power.t.test(n = n[i], delta = .15, sd = 1, type = 'two.sample')$power)
+n &lt;- seq(4, 1000, 2)
+power &lt;- sapply(seq_along(n), function(i) 
+  power.t.test(n = n[i], delta = .15, sd = 1, type = &#39;two.sample&#39;)$power)
 ```
+
 ![](http://educate-r.org/figs/power_plot-1.png)
 
-
-
+___
 
 # Power for (G)LMM
 - Power for more complex models is not as straightforward; 
-    + particularly with messy real world data.
+    &#43; particularly with messy real world data.
 - There is software for GLMM models to generate power:
-    + Optimal Design: <http://hlmsoft.net/od/>
-    + MLPowSim: <http://www.bristol.ac.uk/cmm/software/mlpowsim/>
-    + Snijders, *Power and Sample Size in Multilevel Linear Models*.
+    &#43; Optimal Design: &lt;http://hlmsoft.net/od/&gt;
+    &#43; MLPowSim: &lt;http://www.bristol.ac.uk/cmm/software/mlpowsim/&gt;
+    &#43; Snijders, *Power and Sample Size in Multilevel Linear Models*.
 
-
+___
 
 # Power is hard
 - In practice, power is hard.
 - Need to make many assumptions on data that has not been collected.
-    + Therefore, data assumptions made for power computations will likely differ from collected sample.
+    &#43; Therefore, data assumptions made for power computations will likely differ from collected sample.
 - A power analysis needs to be flexible, exploratory, and well thought out.
 
-
+___
 
 # Power is Fun?
 - Three common reasons to do power analysis:
@@ -68,30 +75,30 @@ power <- sapply(seq_along(n), function(i)
     2. Post Hoc to explore insignificant results
     3. Monte Carlo studies
 
-
+___
 
 # `simglm` Overview
 - `simglm` aims to simulate (G)LMMs with up to three levels of nesting (aim to add more later).
 - Flexible data generation allows: 
-    + any number of covariates and discrete covariates 
-    + change distribution of continuous covariates
-    + change random distribution 
-    + unbalanced data 
-    + missing data 
-    + serial correlation
+    &#43; any number of covariates and discrete covariates 
+    &#43; change distribution of continuous covariates
+    &#43; change random distribution 
+    &#43; unbalanced data 
+    &#43; missing data 
+    &#43; serial correlation
 
-
+___
 
 # Power with `simglm`
 - Power with `simglm` takes on a Monte Carlo approach
-    + This can provide a more thorough analysis/understanding of power.
+    &#43; This can provide a more thorough analysis/understanding of power.
 - Always outputs a data frame
-    + Useful for plotting
-    + Data manipulation
-    + etc. 
+    &#43; Useful for plotting
+    &#43; Data manipulation
+    &#43; etc. 
 - Serves as a wrapper around data generation process.
 
-
+___
 
 # Power Analysis with `simglm`
 - Factorial Design:
@@ -102,27 +109,28 @@ power <- sapply(seq_along(n), function(i)
 - Future Development
     1. Add ability for data generation and power model to differ
 
-
+___
    
 # Simple Example
 - Suppose we wished to generate data for a simple logistic regression.
 
+
 ```r
 library(simglm)
 
-fixed <- ~ 1 + act + diff
-fixed_param <- c(0.1, 0.5, 0.3)
-cov_param <- list(dist_fun = c('rnorm', 'rnorm'),
-                  var_type = c("single", "single"),
+fixed &lt;- ~ 1 &#43; act &#43; diff
+fixed_param &lt;- c(0.1, 0.5, 0.3)
+cov_param &lt;- list(dist_fun = c(&#39;rnorm&#39;, &#39;rnorm&#39;),
+                  var_type = c(&#34;single&#34;, &#34;single&#34;),
                   opts = list(list(mean = 0, sd = 2),
                               list(mean = 0, sd = 4)))
-n <- 50
-temp_single <- sim_glm(fixed = fixed, fixed_param = fixed_param, 
+n &lt;- 50
+temp_single &lt;- sim_glm(fixed = fixed, fixed_param = fixed_param, 
                       cov_param = cov_param, 
-                      n = n, data_str = "single")
+                      n = n, data_str = &#34;single&#34;)
 ```
 
-
+___
 
 # Output
 
@@ -140,27 +148,28 @@ head(temp_single)
 ## 6            1 -2.72704127  3.3246515 -0.26612517 0.4338586        0  6
 ```
 
-
+___
 
 # Simple Power Analysis
 - Suppose we wish to use the same generating model for a power analysis
     
-```r
-pow_param <- c('(Intercept)', 'act', 'diff')
-alpha <- .01
-pow_dist <- "z"
-pow_tail <- 2
-replicates <- 100
 
-power_out <- sim_pow_glm(fixed = fixed, fixed_param = fixed_param, 
+```r
+pow_param &lt;- c(&#39;(Intercept)&#39;, &#39;act&#39;, &#39;diff&#39;)
+alpha &lt;- .01
+pow_dist &lt;- &#34;z&#34;
+pow_tail &lt;- 2
+replicates &lt;- 100
+
+power_out &lt;- sim_pow_glm(fixed = fixed, fixed_param = fixed_param, 
                          cov_param = cov_param, 
-                         n = n, data_str = "single", 
+                         n = n, data_str = &#34;single&#34;, 
                          pow_param = pow_param, alpha = alpha,
                          pow_dist = pow_dist, pow_tail = pow_tail, 
                          replicates = replicates)
 ```
 
-
+___
 
 # Output
 
@@ -171,13 +180,13 @@ power_out
 ```
 ## # A tibble: 3 × 6
 ##           var avg_test_stat sd_test_stat power num_reject num_repl
-##        <fctr>         <dbl>        <dbl> <dbl>      <dbl>    <dbl>
+##        &lt;fctr&gt;         &lt;dbl&gt;        &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;
 ## 1 (Intercept)      0.878713    0.6709319  0.01          1      100
 ## 2         act      2.342617    0.5777646  0.34         34      100
 ## 3        diff      2.609432    0.5506204  0.56         56      100
 ```
 
-
+___
 
 # Varying Arguments
 - Now suppose we wish to vary the following arguments:
@@ -186,20 +195,20 @@ power_out
     
 
 ```r
-terms_vary <- list(n = c(50, 150),
+terms_vary &lt;- list(n = c(50, 150),
                    fixed_param = list(c(0.1, 0.5, 0.3), 
                                       c(0.1, 0.5, 0.45)))
 
-power_out <- sim_pow_glm(fixed = fixed, fixed_param = fixed_param, 
+power_out &lt;- sim_pow_glm(fixed = fixed, fixed_param = fixed_param, 
                          cov_param = cov_param, 
-                         n = n, data_str = "single", 
+                         n = n, data_str = &#34;single&#34;, 
                          pow_param = pow_param, alpha = alpha,
                          pow_dist = pow_dist, pow_tail = pow_tail, 
                          replicates = replicates, 
                          terms_vary = terms_vary)
 ```
 
-
+___
 
 # Output
 
@@ -212,7 +221,7 @@ power_out
 ## Groups: var, n [?]
 ## 
 ##            var     n  fixed_param avg_test_stat sd_test_stat power
-##         <fctr> <dbl>       <fctr>         <dbl>        <dbl> <dbl>
+##         &lt;fctr&gt; &lt;dbl&gt;       &lt;fctr&gt;         &lt;dbl&gt;        &lt;dbl&gt; &lt;dbl&gt;
 ## 1  (Intercept)    50  0.1,0.5,0.3     0.7778328    0.5863240  0.00
 ## 2  (Intercept)    50 0.1,0.5,0.45     0.8364212    0.6377631  0.01
 ## 3  (Intercept)   150  0.1,0.5,0.3     0.8629973    0.5814426  0.00
@@ -225,34 +234,34 @@ power_out
 ## 10        diff    50 0.1,0.5,0.45     3.0747886    0.3988745  0.89
 ## 11        diff   150  0.1,0.5,0.3     4.7892881    0.5025082  1.00
 ## 12        diff   150 0.1,0.5,0.45     5.6060130    0.2823105  1.00
-## # ... with 2 more variables: num_reject <dbl>, num_repl <dbl>
+## # ... with 2 more variables: num_reject &lt;dbl&gt;, num_repl &lt;dbl&gt;
 ```
 
-
+___
 
 # Move to Mixed Models
 - It is simple to move from single level to multilevel or mixed models.
 
 
 ```r
-fixed <- ~1 + time + diff + act + time:act
-random <- ~1 + time
-fixed_param <- c(0, 0.2, 0.1, 0.3, 0.05)
-random_param <- list(random_var = c(3, 2), rand_gen = "rnorm")
-cov_param <- list(dist_fun = c('rnorm', 'rnorm'),
-                  var_type = c("lvl1", "lvl2"),
+fixed &lt;- ~1 &#43; time &#43; diff &#43; act &#43; time:act
+random &lt;- ~1 &#43; time
+fixed_param &lt;- c(0, 0.2, 0.1, 0.3, 0.05)
+random_param &lt;- list(random_var = c(3, 2), rand_gen = &#34;rnorm&#34;)
+cov_param &lt;- list(dist_fun = c(&#39;rnorm&#39;, &#39;rnorm&#39;),
+                  var_type = c(&#34;lvl1&#34;, &#34;lvl2&#34;),
                   opts = list(list(mean = 0, sd = 3),
                               list(mean = 0, sd = 2)))
-n <- 50
-p <- 6
-data_str <- "long"
+n &lt;- 50
+p &lt;- 6
+data_str &lt;- &#34;long&#34;
 
-temp_long <- sim_glm(fixed = fixed, random = random, fixed_param = fixed_param,
+temp_long &lt;- sim_glm(fixed = fixed, random = random, fixed_param = fixed_param,
                      random_param = random_param, cov_param = cov_param,
                      n = n, p = p, k = NULL, data_str = data_str)
 ```
 
-
+___
 
 # Output
 
@@ -277,20 +286,20 @@ head(temp_long)
 ## 6  1.26071793 -13.424622 -12.163904 5.215325e-06        0        6       1
 ```
 
-
+___
 
 # Doing Power
 - Power is also easily extended.
 
 
 ```r
-pow_param <- c('time', 'diff', 'act')
-alpha <- .01
-pow_dist <- "z"
-pow_tail <- 2
-replicates <- 20
+pow_param &lt;- c(&#39;time&#39;, &#39;diff&#39;, &#39;act&#39;)
+alpha &lt;- .01
+pow_dist &lt;- &#34;z&#34;
+pow_tail &lt;- 2
+replicates &lt;- 20
 
-power_out <- sim_pow_glm(fixed = fixed, random = random, 
+power_out &lt;- sim_pow_glm(fixed = fixed, random = random, 
                      fixed_param = fixed_param, 
                      random_param = random_param, cov_param = cov_param, 
                      k = NULL, n = n, p = p,
@@ -299,7 +308,7 @@ power_out <- sim_pow_glm(fixed = fixed, random = random,
                      replicates = replicates)
 ```
 
-
+___
 
 # Output 
 
@@ -310,23 +319,23 @@ power_out
 ```
 ## # A tibble: 3 × 6
 ##      var avg_test_stat sd_test_stat power num_reject num_repl
-##   <fctr>         <dbl>        <dbl> <dbl>      <dbl>    <dbl>
+##   &lt;fctr&gt;         &lt;dbl&gt;        &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;
 ## 1    act      12.06197     46.70227  0.20          4       20
 ## 2   diff      11.89673     45.13827  0.25          5       20
 ## 3   time      18.78877     79.36869  0.05          1       20
 ```
 
-
+___
 
 # Vary Arguments
 - Perhaps our effect size estimate is conservative.
 
 
 ```r
-terms_vary <- list(fixed_param = list(c(0, 0.2, 0.1, 0.3, 0.05), 
+terms_vary &lt;- list(fixed_param = list(c(0, 0.2, 0.1, 0.3, 0.05), 
                                       c(0, 0.2, 0.3, 0.3, 0.05)))
 
-power_out <- sim_pow_glm(fixed = fixed, random = random, 
+power_out &lt;- sim_pow_glm(fixed = fixed, random = random, 
                      fixed_param = fixed_param, 
                      random_param = random_param, cov_param = cov_param, 
                      k = NULL, n = n, p = p,
@@ -336,7 +345,7 @@ power_out <- sim_pow_glm(fixed = fixed, random = random,
                      terms_vary = terms_vary)
 ```
 
-
+___
 
 # Output
 
@@ -349,43 +358,77 @@ power_out
 ## Groups: var [?]
 ## 
 ##      var        fixed_param avg_test_stat sd_test_stat power num_reject
-##   <fctr>             <fctr>         <dbl>        <dbl> <dbl>      <dbl>
+##   &lt;fctr&gt;             &lt;fctr&gt;         &lt;dbl&gt;        &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;
 ## 1    act 0,0.2,0.1,0.3,0.05     1.1914255    0.8114762  0.10          2
 ## 2    act 0,0.2,0.3,0.3,0.05    22.9059014   96.3531136  0.15          3
 ## 3   diff 0,0.2,0.1,0.3,0.05     1.3071639    0.8681348  0.05          1
 ## 4   diff 0,0.2,0.3,0.3,0.05    17.4774138   62.2814403  0.95         19
 ## 5   time 0,0.2,0.1,0.3,0.05     0.9281452    0.7670600  0.05          1
 ## 6   time 0,0.2,0.3,0.3,0.05    12.1678311   49.9607401  0.05          1
-## # ... with 1 more variables: num_repl <dbl>
+## # ... with 1 more variables: num_repl &lt;dbl&gt;
 ```
 
-
+___
 
 # Shiny App
 - Note: This app currently looks nice, but is utterly broken!
 
+
 ```r
-shiny::runGitHub('simglm', username = 'lebebr01', subdir = 'inst/shiny_examples/demo')
+shiny::runGitHub(&#39;simglm&#39;, username = &#39;lebebr01&#39;, subdir = &#39;inst/shiny_examples/demo&#39;)
 ```
 or 
+
 ```r
-devtools::install_github('lebebr01/simglm')
+devtools::install_github(&#39;lebebr01/simglm&#39;)
 library(simglm)
 run_shiny()
 ```
+
 - Must have following packages installed: `simglm, shiny, shinydashboard, ggplot2, lme4, DT`.
 
-
+___
 
 # `simglm` timeline
 - Aim to have this package submitted to CRAN by the end of March.
 - Fix Shiny application.
-- For now look for the package on GitHub <http://github.com/lebebr01/simglm>
+- For now look for the package on GitHub &lt;http://github.com/lebebr01/simglm&gt;
 
-
+___
 
 # Questions?
 - Twitter: @blebeau11
-- Website: <http://brandonlebeau.org>
-- Slides: <http://brandonlebeau.org/2017/02/24/csp2017.html>
-- GitHub: <http://github.com/lebebr01/simglm>
+- Website: &lt;http://educate-r.org&gt;
+- Slides: &lt;http://educate-r.org/2017/02/24/csp2017.html&gt;
+- GitHub: &lt;http://github.com/lebebr01/simglm&gt;
+
+
+
+            </div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/notes/notes.js' }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

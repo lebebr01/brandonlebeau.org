@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <head>
+        {{ with $.Scratch.Get "generalTitle" }}
+            <title>{{ . }}</title>
+        {{ else }}
+            {{ with .Title }}
+                <title>{{ . }}</title>
+            {{ else }}
+                <title>{{ .Site.Title }}</title>
+            {{ end }}
+        {{ end }}
+
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        {{ .Hugo.Generator }}
+        {{ partial "favicon" . }}
+
+        {{ with .Params.author }}
+            <meta name="author" content="{{ . }}">
+        {{ end }}
+        {{ with .Description }}
+            <meta name="description" content="{{ . }}">
+        {{ else }}
+            {{ with .Site.Params.description }}
+                <meta name="description" content="{{ . }}">
+            {{ end }}
+        {{ end }}
+
+        {{ template "_internal/twitter_cards.html" . }}
+        {{ template "_internal/opengraph.html" . }}
+        {{ template "_internal/schema.html" . }}
+        {{ template "_internal/google_news.html" . }}
+
+        <!--[if lte IE 8]><script src="/js/ie/html5shiv.js"></script><![endif]-->
+
+        <!-- Keeping the deprecated param, minifiedFilesCSS, for now. The new param
+             that replaces this is customCSS. Utilizing a scratch variable cssFiles
+             to keep the deprecated param. -->
+        {{ if isset .Site.Params "minifiedFilesCSS" }}
+            {{ $.Scratch.Set "cssFiles" .Site.Params.minifiedFilesCSS }}
+        {{ else if isset .Site.Params "customCSS" }}
+            {{ $.Scratch.Set "cssFiles" .Site.Params.customCSS }}
+        {{ else }}
+            {{ $.Scratch.Set "cssFiles" false }}
+        {{ end }}
+
+        <!-- If the value "default" is passed into the param then we will first
+             load the standard css files associated with the theme -->
+        {{ if or (in ($.Scratch.Get "cssFiles") "default") (eq ($.Scratch.Get "cssFiles") false) }}
+            <link rel="stylesheet" href="/css/google-font.css" />
+            <link rel="stylesheet" href="/css/font-awesome.min.css" />
+            <link rel="stylesheet" href="/css/main.css" />
+            <link rel="stylesheet" href="/css/add-on.css" />
+            <link rel="stylesheet" href="/css/monokai-sublime.css">
+        {{ end }}
+
+        {{ if ne ($.Scratch.Get "cssFiles") false }}
+            {{ range $.Scratch.Get "cssFiles" }}
+                {{ if ne . "default" }}
+                    <link rel="stylesheet" href="{{ . }}" />
+                {{ end }}
+            {{ end }}
+        {{ end }}
+
+        <!--[if lte IE 9]><link rel="stylesheet" href="/css/ie9.css" /><![endif]-->
+        <!--[if lte IE 8]><link rel="stylesheet" href="/css/ie8.css" /><![endif]-->
+        {{ if not (in (printf "%#v" .Site.BaseURL) "localhost") }}
+            {{ template "_internal/google_analytics.html" . }}
+        {{ end }}
+
+	<link rel="stylesheet" href="{{"revealjs/css/reveal.css"|relURL}}">
+	<link rel="stylesheet" href="{{"revealjs/css/theme/"|relURL}}simple.css" id="theme">
+	<link rel="stylesheet" href="{{"revealjs/lib/css/zenburn.css"|relURL}}">
+
+	<style type="text/css">
+    .reveal h1 { font-size: 2em; }
+    .reveal h2 {font-size: 1.25em;}
+    .reveal h3 {font-size: 1em;}
+    body {
+    background-image: url(http://educate-r.org/figs/ui_logo.jpg);
+    position: absolute;
+    background-repeat: no-repeat;
+    background-position: 20px 900px;
+    background-size: 250px;
+  }
+  </style>
+    <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? '{{ "/reveal.js/css/print/pdf.css" | relURL }}' : '{{ "reveal.js/css/print/paper.css" | relURL }}';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    </head>
+    <body>

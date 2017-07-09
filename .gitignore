@@ -4,3 +4,6 @@ public/
 .RData
 .Ruserdata
 Thumbs.db
+
+*.knit.md
+*.utf8.md
