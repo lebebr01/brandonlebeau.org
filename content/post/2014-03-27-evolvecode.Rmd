@@ -2,8 +2,7 @@
 title: "Evolution of Code"
 author: "Brandon LeBeau"
 date: 2014-03-27
-categories: ["R"]
-tags: ["code", "XML"]
+categories: ["r", "code", "XML"]
 ---
 
 Recently while scraping some data from the college football data warehouse site, I started to realize the evolution of my code.  To preface this, I am definitely not a trained programmer, just a self taught junky who enjoys doing it when I have time.  I've slowly evolved my programming skills from simply statistics languages like r or SPSS, to some other languages like LaTeX, HTML, CSS, Javascript, and I've started to work through some python.  

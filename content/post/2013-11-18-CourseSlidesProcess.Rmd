@@ -2,8 +2,7 @@
 title: "Formatting Markdown Table with R"
 author: "Brandon LeBeau"
 date: 2013-11-18
-tags: ["R"]
-categories: ["markdown", "LaTeX", "slidy"]
+tags: ["r", "markdown", "LaTeX", "slidy"]
 ---
 
 This past August I took an opportunity to step back into the University academic world as a [Visiting Assistant Professor](http://http://coehp.uark.edu/12216.php) at the [University of Arkansas](http://www.uark.edu).  I have enjoyed the transition back into the academic world, including a more flexible schedule, variation in topics/duties, and collaborating with colleagues.

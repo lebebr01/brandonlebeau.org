@@ -2,8 +2,7 @@
 title: "simglm submission to CRAN this week"
 author: "Brandon LeBeau"
 date: 2017-05-23
-categories: ["R"]
-tags: ["simglm", "package"]
+categories: ["r", "simglm", "package"]
 ---
 
 This is a quick note looking for any further feedback on the simglm package prior to CRAN submission later this week. The goal is to submit Thursday or Friday this week. The last few documentation finishing touches are happening now working toward a version 0.5.0 release on CRAN.

@@ -2,8 +2,7 @@
 title: "Picking a gui interface for R"
 author: "Brandon LeBeau"
 date: 2014-02-02
-categories: ["R"]
-tags: ["gui"]
+categories: ["r", "gui"]
 ---
 
 Recently I decided to switch statistical programs used for the master's level introductory statistics course I teach here at the University of Arkansas.  Historically this course has been taught with SPSS, but I am attempting the switch to R this semester.  

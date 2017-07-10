@@ -2,8 +2,7 @@
 title: "Update to highlightHTML package"
 author: "Brandon LeBeau"
 date: 2014-03-14
-categories: ["R"]
-tags: ["highlightHTML", "markdown", "HTML"]
+categories: ["r", "highlightHTML", "markdown", "HTML"]
 ---
   
 I've added a new functionality to my `highlightHTML` package.  This package post-processes HTML files and injects CSS and adds tags to create some further customization (for example highlight cells of a HTML table).  This is most useful when writing a document using markdown and converting it into a HTML document using a tool like knitr, slidify, or even pandoc.  

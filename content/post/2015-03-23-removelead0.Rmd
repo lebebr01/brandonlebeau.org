@@ -2,8 +2,7 @@
 title: "Remove leading 0 with ggplot2"
 author: "Brandon LeBeau"
 date: 2015-03-23
-categories: ["R"]
-tags: ["graphics", "ggplot2"]
+categories: ["r", "graphics", "ggplot2"]
 ---
 
 I recently had an occasion while working on a three variable interaction plot for a paper where I wanted to remove the leading 0's in the x-axis text labels using `ggplot2`. This was primarily due to some space concerns I had for the x-axis labels. Unfortunately, I did not find an obvious way to do this in my first go around. After tickering a bit, I've found a workaround. The process is walked through below.

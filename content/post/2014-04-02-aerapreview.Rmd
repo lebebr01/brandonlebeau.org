@@ -2,8 +2,7 @@
 title: "AERA Preview"
 author: "Brandon LeBeau"
 date: 2014-04-02
-categories: ["R"]
-tags: ["rCharts", "Javascript", "AERA"]
+categories: ["r", "rCharts", "Javascript", "AERA"]
 ---
 
 The American Educational Research Association (AERA) annual conference is this weekend in Philadelphia.  I was lucky to have a paper accepted into the conference.  I am presenting a meta analysis that I have been working on for the past two years or so titled: Model misspecification and assumption violations with the linear mixed model: A meta analysis.

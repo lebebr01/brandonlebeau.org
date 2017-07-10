@@ -2,8 +2,7 @@
 title: "Conditional Formatting Tables using R"
 author: "Brandon LeBeau"
 date: 2013-09-28
-categories: ["R"]
-tags: ["LaTeX"]
+categories: ["r", "LaTeX"]
 ---
 
 One thing that I had the opportunity to develop while working last year at [Saint Paul Public Schools](http://spps.org/) was figuring out a quick, easy, and painless way to do interactive report generation.  When I arrived in the REA department at Saint Paul Public Schools, the report generation process was roughly as follows:  

@@ -2,7 +2,7 @@
 title: Web Scraping to Item Response Theory - A College Football Adventure
 author: Brandon LeBeau
 date: 2015-12-04
-tags: [R, slides, rvest, cfb]
+tags: [r, slides, rvest, cfb]
 ---
 
 <h1>Web Scraping to Item Response Theory: A College Football Adventure</h1>
@@ -35,7 +35,6 @@ tags: [R, slides, rvest, cfb]
 
 
 # Example Coach Data
-
 ```
 ##   Year Team Win Loss Tie     Pct  PF  PA Delta        coach
 ## 1 2010 Iowa   8    5   0 0.61538 376 221   155 Kirk Ferentz
@@ -58,7 +57,6 @@ tags: [R, slides, rvest, cfb]
 
 
 # Example GBG Data
-
 ```
 ##    Team           Official Year       Date WL          Opponent PF PA
 ## 1  Iowa University of Iowa 2014  8/30/2014  W     Northern Iowa 31 23
@@ -110,12 +108,12 @@ tags: [R, slides, rvest, cfb]
 
 
 # Iowa Coaches Over Time
-<img src="http://brandonlebeau.org/figs/iowa.png" alt="" height = "500" width = "1200"/>
+<img src="/figs/iowa.png" alt="" height = "500" width = "1200"/>
 
 
 
 # Iowa State Coaches Over Time
-<img src="http://brandonlebeau.org/figs/iowa_state.png" alt="" height = "500" width="1200"/>
+<img src="/figs/iowa_state.png" alt="" height = "500" width="1200"/>
 
 
 
@@ -174,7 +172,7 @@ tags: [R, slides, rvest, cfb]
 
 
 # HTML Code Example
-<img src="http://brandonlebeau.org/figs/ferentz_wikiside.png" alt="" height = "500" width="1200"/>
+<img src="/figs/ferentz_wikiside.png" alt="" height = "500" width="1200"/>
 
 
 
@@ -206,7 +204,6 @@ tags: [R, slides, rvest, cfb]
 
 
 # Combine SelectorGadget with rvest
-
 ```r
 library(rvest)
 wiki_kirk <- read_html("https://en.wikipedia.org/wiki/Kirk_Ferentz")
@@ -229,7 +226,6 @@ head(wiki_kirk_extract)
 
 # Extract text
 - Use the `html_text` function
-
 
 ```r
 wiki_kirk_extract <- wiki_kirk %>%
@@ -435,7 +431,7 @@ fm1a <- glmer(wingbg ~ 0 + (1|coach) + (1|Team),
 
 
 # Plot Showing Team Ability
-<img src="http://brandonlebeau.org/figs/team_ability.png" alt="" height = "500" width="1200"/>
+<img src="/figs/team_ability.png" alt="" height = "500" width="1200"/>
 
 
 

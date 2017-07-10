@@ -86,8 +86,9 @@
 
     <!-- This if statement only applies if someone goes to the /categories url -->
     <!-- Otherwise this section is shown for all other links -->
-    {{ if ne ($.Scratch.Get "showCategories") false }}
-    <!-- Categories List -->
+ <!--   {{ if ne ($.Scratch.Get "showCategories") false }}
+
+     Categories List
         <section id="categories">
             <ul class="posts">
                 <header>
@@ -100,7 +101,9 @@
                     {{ $.Scratch.Set "categories" .Site.Taxonomies.categories.Alphabetical }}
                 {{ end }}
 
+                
                 {{ range $key, $value := $.Scratch.Get "categories" }}
+                
                     <li>
                         <article>
                             <header>
@@ -113,6 +116,7 @@
             </ul>
         </section>
     {{ end }}
+    -->
 
     <!-- About -->
         {{ with .Site.Params.intro.about }}

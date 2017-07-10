@@ -2,8 +2,7 @@
 title: "Google location data -- Where I've been"
 author: "Brandon LeBeau"
 date: 2014-09-26
-categories: ["R"]
-tags: ["graphics", "ggplot2", "maps", "google"]
+categories: ["r", "graphics", "ggplot2", "maps", "google"]
 ---
 
 I was emailed by a friend that was looking into their google location data and had asked if I had ever used a json file before in R. I said I had not, but I knew there were packages to do such things. The things I sent were things he had already tried, so what did I decide to do? I went ahead and downloaded my own google location data. 

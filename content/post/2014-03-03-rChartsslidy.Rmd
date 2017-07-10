@@ -2,8 +2,7 @@
 title: "rCharts in slidy"
 author: "Brandon LeBeau"
 date: 2014-03-03
-categories: ["R"]
-tags: ["rCharts", "javascript", "html", "slidy"]
+categories: ["r", "rCharts", "javascript", "html", "slidy"]
 ---
 
 My last post I talked about using `rCharts` to create interactive graphics for my presentation.  They seemed to go over pretty well in my interviews and helped me greatly as I did not need to remember or write down specific numbers to talk about.  I use *slidy* to create my HTML slideshows and there was some interest to see exactly how I had these charts into a *slidy* html presentation.

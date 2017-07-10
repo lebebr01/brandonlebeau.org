@@ -1,8 +1,7 @@
 ---
 title: "Guessing Correlations: A shiny app"
 author: "Brandon LeBeau"
-categories: ["R"]
-tags: ["shiny", "teaching"]
+categories: ["r", "shiny", "teaching"]
 ---
 
 A recent hobby of mine (as with many other R users) is to play around with the relatively new R package: *shiny*.  I started creating demo applications about a year ago just to figure out how powerful the platform could be, but it was not until this fall that I started creating some applications for others to use.

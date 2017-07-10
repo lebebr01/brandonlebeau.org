@@ -2,8 +2,7 @@
 title: "SPSStoR An R package to convert SPSS syntax"
 author: "Brandon LeBeau"
 date: 2013-11-26
-categories: ["r"] 
-tags: ["SPSS", "package"]
+categories: ["r", "SPSS", "package"]
 ---
 
 My first statistical software package I used as an undergrad was SPSS.  I was fortunate during my senior year at [Luther College](http://www.luther.edu) to be initially introduced to [R](http://r-project.org).  I did not realize it at the time (except for the pretty graphics) that this was the start of something big for me.  Fast forward a year to graduate school at the University of Minnesota and the majority of my program was again using SPSS.  Under the tutelage of [Andy](http://www.cehd.umn.edu/edpsych/people/Faculty/Zieffler.html) in my first graduate statistics course I started to do analyses in both R and SPSS.  After that I started to do all my analyses in R.  Fast forward five years this time to my first full-time job after graduate school at [Saint Paul Public Schools](http://www.spps.org) and again everyone was using SPSS.  Fortunately in my year there I was able to significantly push them toward using R more and more.

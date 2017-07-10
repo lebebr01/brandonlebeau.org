@@ -2,8 +2,7 @@
 title: "Two of my favorite data.table features"
 author: "Brandon LeBeau"
 date: 2014-01-06
-categories: ["R"]
-tags: ["data.table"]
+categories: ["r", "data.table"]
 ---
 
 When I started to use the *data.table* package I was primarily using it to aggregate.  I had read about *data.table* and its blazing speed compared to the other options from base or the *plyr* package especially with large amounts of data.  As an example, I remember calculating averages or percentages while at Saint Paul Public Schools and while the calculations were running would walk away for 5 minutes to wait for them to finish.  When using *data.table* to do the same calculations I didn't need to wait 5 minutes to see the calculated values.

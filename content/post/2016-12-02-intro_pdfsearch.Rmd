@@ -2,8 +2,7 @@
 title: "Introduction of the pdfsearch package"
 author: "Brandon LeBeau"
 date: 2016-12-02
-categories: ["R"]
-tags: ["pdfsearch", "package"]
+categories: ["r", "pdfsearch", "package"]
 ---
 
 ```{r options, echo = FALSE}

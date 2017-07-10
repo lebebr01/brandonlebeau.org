@@ -2,8 +2,7 @@
 title: "Formatting Markdown Table with R"
 author: "Brandon LeBeau"
 date: 2013-11-01
-categories: ["R"] 
-tags: ["markdown", "CSS"]
+categories: ["r", "markdown", "CSS"]
 ---
 
 This past summer when the [twin cities R user group](http://www.meetup.com/twincitiesrug/) was starting to get back up and running, I offered to present on some R related things that I was working on.  One thing I was working on was a part of my last [post](http://http://educate-r.org/2013/09/28/ConditionalFormat/).  In a response to discussing this during a meeting, I was posed with the problem of how to do this with a markdown table.  I replied I was unsure how to do this directly with R, but it could likely be possible.

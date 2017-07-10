@@ -2,8 +2,7 @@
 title: "simglm submission to CRAN this week"
 author: "Brandon LeBeau"
 date: 2017-05-23
-categories: ["R"]
-tags: ["simglm", "package"]
+categories: ["r", "simglm", "package"]
 ---
 
 
@@ -35,14 +34,14 @@ temp_single &lt;- sim_reg(fixed = fixed, fixed_param = fixed_param,
                        data_str = &quot;single&quot;)
 head(temp_single)</code></pre>
 <pre><code>## # A tibble: 6 x 9
-##   X.Intercept.         act       diff   numCourse act.numCourse     Fbeta
-##          &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;         &lt;dbl&gt;     &lt;dbl&gt;
-## 1            1  0.04450545  0.2426930  0.62671910    0.02789242  4.670016
-## 2            1  0.53729960 -1.5899360 -0.06024624   -0.03237028  2.283660
-## 3            1 -0.50498664 -1.1848887 -0.15804807    0.07981216 -1.598379
-## 4            1  1.15257164 -0.2434299  0.53400830    0.61548282  9.466851
-## 5            1 -0.45773270  0.9914578  1.26058559   -0.57701124  4.418554
-## 6            1 -0.46515898  0.8567129  0.09263554   -0.04309025  1.234121
+##   X.Intercept.        act       diff  numCourse act.numCourse      Fbeta
+##          &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;
+## 1            1  1.4426603  0.9016265 -1.2772574   -1.84264842  0.5165699
+## 2            1  0.7116728  0.9989622  1.0026443    0.71355472 10.7820181
+## 3            1 -2.0090976 -1.3180347  0.3144391   -0.63173885 -7.5173661
+## 4            1  0.4858099 -1.4506373  0.1106893    0.05377397  2.9875628
+## 5            1  0.2748994 -0.4313113  0.1126455    0.03096618  3.1244778
+## 6            1  0.3574874 -0.6413786  1.7443534    0.62358442 10.1409768
 ## # ... with 3 more variables: err &lt;dbl&gt;, sim_data &lt;dbl&gt;, ID &lt;int&gt;</code></pre>
 <p>Then one can extend this to conduct of power analysis. The benefit of this approach is that you are able to generate data that hopefully more closely resembles data that is to be collected and can also evaluate assumption violations, sample size differences, and other conditions directly into the power analysis similar to a Monte Carlo simulation.</p>
 <pre class="r"><code>fixed &lt;- ~ 1 + act + diff + numCourse + act:numCourse

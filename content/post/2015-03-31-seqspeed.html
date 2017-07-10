@@ -2,8 +2,7 @@
 title: "Speed test of sequence generation for unbalanced simulation"
 author: "Brandon LeBeau"
 date: 2015-05-31
-categories: ["R"]
-tags: ["sequence", "speedtest"]
+categories: ["r", "sequence", "speedtest"]
 ---
 
 
@@ -12,7 +11,7 @@ tags: ["sequence", "speedtest"]
 <p>I am working on a simulation that uses the unbalanced functionality and while simulating longitudinal data I’ve found the function is much slower than the cross sectional counterparts (and balanced designs). I’ve ran some additional testing and I believe I have the speed issues narrowed down to the fact that I am generating a time variable. Essentially, I have a vector of number of observations per cluster. The function then turns this vector of lengths into a time variable starting at 0 up to the maximum number of observations minus 1 by 1. As an example:</p>
 <pre class="r"><code>x &lt;- round(runif(5, min = 3, max = 10), 0)
 unlist(lapply(1:length(x), function(xx) (1:x[xx]) - 1))</code></pre>
-<pre><code>##  [1] 0 1 2 3 0 1 2 3 4 5 6 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 8 0 1 2 3</code></pre>
+<pre><code>##  [1] 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 0 1 2 3 4 5 6 7 0 1 2 3 4 0 1 2 3</code></pre>
 <p>From the code above, you can see that there the number of observations is generated using <code>runif</code> which is saved to the object <code>x</code>. Then I use a combination of lapply, unlist, and the ‘:’ operator to generate the sequence. This is the same code used in my package above to generate the time variable.</p>
 <p>As such, I was interested in testing various ways to generate the sequence and do a performance comparison. I compared the following ways, the <code>':'</code> operator, <code>seq.int</code>, <code>seq</code>, <code>do.call</code> with <code>mapply</code>, and <code>rep.int</code> for the balanced case as a comparison to how it was done before. This was all done with the great <code>microbenchmark</code> package.</p>
 <p>Here are the results from the 7 comparisons:</p>
@@ -29,14 +28,14 @@ microbenchmark(
   times = 1000L
 )</code></pre>
 <pre><code>## Unit: microseconds
-##            expr      min        lq        mean   median       uq       max neval
-##           colon   74.030   80.9580  134.339177   86.428   93.721 37381.140  1000
-##         seq.int   93.356  101.0145  119.425888  106.485  114.873  1730.737  1000
-##             seq 1295.683 1365.8825 1498.606351 1429.518 1504.640  3816.665  1000
-##  seq.int_mapply  102.838  110.4960  130.154180  116.696  124.354  1286.931  1000
-##      seq_mapply  549.198  585.3005  654.110454  615.568  648.754  2035.968  1000
-##    colon_mapply   87.887   95.1800  108.621345  100.286  106.120  1203.785  1000
-##         rep.int    1.094    1.8240    2.288244    2.188    2.553    22.610  1000</code></pre>
+##            expr      min       lq       mean    median        uq       max neval
+##           colon   73.664   88.252  171.78559   96.6395  118.3365 40335.354  1000
+##         seq.int   95.545  110.497  159.86736  120.3420  144.2285  4190.819  1000
+##             seq 1377.369 1517.039 2099.30433 1617.3240 2026.4870 13115.090  1000
+##  seq.int_mapply  106.120  121.801  173.78912  132.0120  163.1920  5171.789  1000
+##      seq_mapply  590.770  659.329  852.66232  698.1660  827.2610  5494.159  1000
+##    colon_mapply   90.075  105.391  144.30601  114.5075  140.9465  2213.929  1000
+##         rep.int    1.094    1.824    4.37309    2.9180    4.3770   381.084  1000</code></pre>
 <p>The results (in microseconds) show that this is where the significant slowdown is coming in my package implementing the unbalanced cases, although it appears that the ‘:’ operator is the second best alternative. For those that have not seen the significant speed bump of the <code>seq.int</code> and <code>rep.int</code> over the <code>seq</code> and <code>rep</code> alternatives should also pay close attention (compare lines 2 and 3 above).</p>
 <p>I’d be interested in alternative procedures that I am not aware of as well. Although not a big deal when running the package once, doing it 50,000 times does add up.</p>
 <p>Lastly, for those that are interested, we can show they are all equivalent methods (except for the <code>rep.int</code> case).</p>

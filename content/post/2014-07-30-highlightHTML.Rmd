@@ -2,8 +2,7 @@
 title: "Format Markdown Documents in R"
 author: "Brandon LeBeau"
 date: 2014-07-30
-categories: ["R"]
-tags: ["highlightHTML", "package", "CSS", "markdown", "html"]
+categories: ["r", "highlightHTML", "package", "CSS", "markdown", "html"]
 ---
 
 Have you ever used a markdown file to create an html file?  Have you ever wanted to quickly format the subsequent html file to add some color or other aspects?  If your answer is yes to both of those questions, this package may be of interest to you.

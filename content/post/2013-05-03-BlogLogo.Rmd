@@ -2,8 +2,7 @@
 title: "Blog Logo"
 author: "Brandon LeBeau"
 date: 2013-05-03
-categories: ["R"]
-tags: ["ggplot2"]
+categories: ["r", "ggplot2"]
 ---
 
 Here is the code used to create the blog logo.  Took a bit of trial and error, especially with the official R logo.

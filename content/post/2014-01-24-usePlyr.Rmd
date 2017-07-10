@@ -2,8 +2,7 @@
 title: "When I use `plyr`/`dplyr`"
 author: "Brandon LeBeau"
 date: 2014-01-24
-categories: ["R"]
-tags: ["plyr", "dplyr"]
+categories: ["r", "plyr", "dplyr"]
 ---
 
 My last post I talked about how I use the *data.table* package for aggregating and removing duplicate observations.  Although I use the *data.table* package quite often, there are many times when I use *plyr* (and now the new *dplyr*) package, primarily because of its easy, intuitive syntax.  
