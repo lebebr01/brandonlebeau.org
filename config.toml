@@ -3,8 +3,8 @@ relativeurls = true
 languageCode = "en-us"
 title = "Brandon LeBeau"
 theme = "hugo-future-imperfect"
-googleAnalytics = ""
-disqusShortname = ""
+googleAnalytics = "UA-43425299-2"
+disqusShortname = "brandonlebeau"
 ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 
 [permalinks]
