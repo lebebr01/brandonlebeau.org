@@ -16,10 +16,9 @@ categories: ["r", "pdfsearch", "package"]
 <div id="basic-example" class="section level2">
 <h2>Basic Example</h2>
 <p>Doing a simple keyword search on a single pdf file uses the <code>keyword_search</code> function. The following is a simple example using a pdf from <a href="https://arxiv.org/">arXiv</a>.</p>
-<pre class="r"><code>library(pdfsearch)</code></pre>
-<pre><code>## Warning: package &#39;pdftools&#39; was built under R version 3.4.1</code></pre>
-<pre><code>## Warning: package &#39;tibble&#39; was built under R version 3.4.1</code></pre>
-<pre class="r"><code>file &lt;- system.file(&#39;pdf&#39;, &#39;1501.00450.pdf&#39;, package = &#39;pdfsearch&#39;)
+<pre class="r"><code>library(pdfsearch)
+
+file &lt;- system.file(&#39;pdf&#39;, &#39;1501.00450.pdf&#39;, package = &#39;pdfsearch&#39;)
 
 key_res &lt;- keyword_search(file, 
                           keyword = c(&#39;repeated measures&#39;, &#39;mixed effects&#39;),

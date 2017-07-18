@@ -12,12 +12,9 @@ categories: ["r", "simglm", "package"]
 <p>To install the package and also build the vignettes:</p>
 <pre class="r"><code>devtools::install_github(&quot;lebebr01/simglm&quot;, build_vignettes = TRUE)</code></pre>
 <p>Then to generate a simple single level data set.</p>
-<pre class="r"><code>library(simglm)</code></pre>
-<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 3.4.1</code></pre>
-<pre><code>## Warning: package &#39;purrr&#39; was built under R version 3.4.1</code></pre>
-<pre><code>## Warning: package &#39;tidyr&#39; was built under R version 3.4.1</code></pre>
-<pre><code>## Warning: package &#39;tibble&#39; was built under R version 3.4.1</code></pre>
-<pre class="r"><code>fixed &lt;- ~ 1 + act + diff + numCourse + act:numCourse
+<pre class="r"><code>library(simglm)
+
+fixed &lt;- ~ 1 + act + diff + numCourse + act:numCourse
 fixed_param &lt;- c(2, 4, 1, 3.5, 2)
 cov_param &lt;- list(dist_fun = c(&#39;rnorm&#39;, &#39;rnorm&#39;, &#39;rnorm&#39;), 
                   var_type = c(&quot;single&quot;, &quot;single&quot;, &quot;single&quot;),
@@ -34,14 +31,14 @@ temp_single &lt;- sim_reg(fixed = fixed, fixed_param = fixed_param,
                        data_str = &quot;single&quot;)
 head(temp_single)</code></pre>
 <pre><code>## # A tibble: 6 x 9
-##   X.Intercept.        act       diff  numCourse act.numCourse      Fbeta
-##          &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;
-## 1            1  1.4426603  0.9016265 -1.2772574   -1.84264842  0.5165699
-## 2            1  0.7116728  0.9989622  1.0026443    0.71355472 10.7820181
-## 3            1 -2.0090976 -1.3180347  0.3144391   -0.63173885 -7.5173661
-## 4            1  0.4858099 -1.4506373  0.1106893    0.05377397  2.9875628
-## 5            1  0.2748994 -0.4313113  0.1126455    0.03096618  3.1244778
-## 6            1  0.3574874 -0.6413786  1.7443534    0.62358442 10.1409768
+##   X.Intercept.         act       diff   numCourse act.numCourse      Fbeta
+##          &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;
+## 1            1  0.04045215 -0.7738108  0.02183119  0.0008831184  1.4661731
+## 2            1  0.09351232  1.3360941  1.34312887  0.1255991021  8.6622926
+## 3            1  0.06066363 -1.2230152  1.26423076  0.0766928310  5.5978327
+## 4            1  0.01352531  0.3356532 -0.12900022 -0.0017447676  1.9347642
+## 5            1 -0.91711660 -0.3569118  0.85737040 -0.7863086260 -0.5971991
+## 6            1  1.40470811  1.8956529 -0.83768332 -1.1767005519  4.2291926
 ## # ... with 3 more variables: err &lt;dbl&gt;, sim_data &lt;dbl&gt;, ID &lt;int&gt;</code></pre>
 <p>Then one can extend this to conduct of power analysis. The benefit of this approach is that you are able to generate data that hopefully more closely resembles data that is to be collected and can also evaluate assumption violations, sample size differences, and other conditions directly into the power analysis similar to a Monte Carlo simulation.</p>
 <pre class="r"><code>fixed &lt;- ~ 1 + act + diff + numCourse + act:numCourse

@@ -20,22 +20,21 @@ simdata &lt;- data.frame(x = runif(2400, min = .032, max = .210),
 <p>As shown below, initially there is no group differences, but there are facet differences. Exploring the interaction between the grouping variables shows there is a two variable interaction. Note: This example is not identical to the three variable interaction I originally described above, but assume here that the x variable is also important.</p>
 <pre class="r"><code>with(simdata, tapply(y, group, mean))</code></pre>
 <pre><code>##            1            2 
-## 0.0004855595 0.3513839615</code></pre>
+## -0.007363107  0.337608568</code></pre>
 <pre class="r"><code>with(simdata, tapply(y, facet, mean))</code></pre>
-<pre><code>##           1           2           3 
-## 0.001192969 0.003268391 0.504482132</code></pre>
+<pre><code>##            1            2            3 
+## -0.002518647  0.002971223  0.493190756</code></pre>
 <pre class="r"><code>with(simdata, tapply(y, interaction(group, facet), mean))</code></pre>
-<pre><code>##           1.1           2.1           1.2           2.2           1.3 
-##  0.0024901335 -0.0003607781  0.0030037546  0.0035424550 -0.0042616897 
-##           2.3 
-##  1.0132259546</code></pre>
+<pre><code>##          1.1          2.1          1.2          2.2          1.3 
+## -0.006476788  0.001539700 -0.004832912  0.010736435 -0.010784375 
+##          2.3 
+##  0.997165888</code></pre>
 <p>In the example in the paper, I aggregated the unique x values to the third decimal place. That is done with the following <code>dplyr</code> code. Note: The data did not need to be aggregated, but it is a bit easier to work with when plotting later.</p>
 <pre class="r"><code># round value to .001 and aggregate
 simdata$x_rd &lt;- round(simdata$x, 3)
 
 # aggregate
 library(dplyr)</code></pre>
-<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 3.4.1</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;dplyr&#39;</code></pre>
 <pre><code>## The following objects are masked from &#39;package:stats&#39;:
@@ -48,21 +47,21 @@ library(dplyr)</code></pre>
   group_by(x_rd, group, facet) %&gt;%
   summarise(y = mean(y))
 simdata_agg </code></pre>
-<pre><code>## # A tibble: 962 x 4
+<pre><code>## # A tibble: 960 x 4
 ## # Groups:   x_rd, group [?]
 ##     x_rd group facet            y
 ##    &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;        &lt;dbl&gt;
-##  1 0.032     1     1 -0.052729868
-##  2 0.032     1     2  0.030420003
-##  3 0.032     2     2  0.035890709
-##  4 0.033     1     1 -0.041321287
-##  5 0.033     1     2  0.016840926
-##  6 0.033     1     3  0.167207978
-##  7 0.033     2     1 -0.064811086
-##  8 0.033     2     2 -0.002378605
-##  9 0.034     1     1 -0.007776717
-## 10 0.034     1     2 -0.069170417
-## # ... with 952 more rows</code></pre>
+##  1 0.032     1     1 -0.032843596
+##  2 0.032     1     2  0.050348568
+##  3 0.032     1     3  0.149482435
+##  4 0.032     2     1  0.007618005
+##  5 0.032     2     2  0.011283906
+##  6 0.033     1     1 -0.285390933
+##  7 0.033     1     2 -0.063111885
+##  8 0.033     1     3 -0.139241019
+##  9 0.033     2     1 -0.145610963
+## 10 0.033     2     2 -0.154409865
+## # ... with 950 more rows</code></pre>
 <p>Now that the data is aggregated, it can be directly plotted with <code>ggplot2</code>. This is the base plot that contains the leading 0’s by default and treats the x variable as continuous (which it really is continuous).</p>
 <pre class="r"><code>library(ggplot2)
 p &lt;- ggplot(simdata_agg, aes(x = x_rd, y = y, shape = factor(group))) + 
