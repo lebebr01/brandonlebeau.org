@@ -20,3 +20,5 @@ Research
  - **Small Sample IRT Estimation:** Similar to above, IRT is a large sample procedure and estimates from small samples should be well understood. My research is currently exploring precision in estimation for unidimensional IRT models under small sample conditions.
  
 You can read my full CV here: [Curriculum Vitae](/LeBeauCV-website.pdf)
+
+Link to [R-Bloggers](https://www.r-bloggers.com/)
