@@ -44,7 +44,7 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 
     [[menu.main]]
       name = 'Categories'
-      url = '/categories'
+      url = '/categories/'
       weight = 6
 
     [[menu.main]]
