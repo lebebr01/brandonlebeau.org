@@ -18,12 +18,6 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
     categoriesByCount    = true
     includeReadingTime   = true
 
-    # options for highlight.js (version, additional languages, and theme)
-    highlightjsVersion = "9.11.0"
-    highlightjsCDN = "//cdn.bootcss.com"
-    highlightjsLang = ["r", "yaml", "latex", "html", "bash", "markdown"]
-    highlightjsTheme = "github"
-
     MathJaxCDN = "//cdn.bootcss.com"
     MathJaxVersion = "2.7.1"
 

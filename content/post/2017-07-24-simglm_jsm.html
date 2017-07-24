@@ -1,0 +1,188 @@
+---
+title: "Announcing `simglm` version 0.6.0: Power and Simulation of Generalized Linear Mixed Models"
+author: "Brandon LeBeau"
+date: 2017-07-24
+categories: ["r", "simglm", "package"]
+slug: "simglm-jsm"
+---
+
+
+
+<p>The <code>simglm</code> package has an update on CRAN bumping the version up to 0.6.0. This update has added the ability to simulate count data (poisson) and also has fixed (I think) the Shiny app that comes with the package. As I have not posted about this package since the first CRAN release (v 0.5.0), I plan to give an overview of all that the package offers in addition to the new additions.</p>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>The package can be installed directly from CRAN:</p>
+<pre class="r"><code>install.packages(&quot;simglm&quot;)</code></pre>
+</div>
+<div id="simglm-features" class="section level2">
+<h2><code>simglm</code> Features</h2>
+<p>The package allows for flexible simulation of general(-ized) linear (mixed) models with up to three levels of nesting. The flexibility comes from the ability to easily vary data generation procedures. For example one can use any R data generating function to simulate error, random effect, or covariate distributions. Other data generating options can include:</p>
+<ul>
+<li>heterogeneity of variance</li>
+<li>missing data</li>
+<li>ARIMA models for within error structure</li>
+<li>flexible time specification for longitudinal models</li>
+<li>unbalanced data generation for nested designs</li>
+<li>correlated covariates</li>
+<li>factor/categorical variable generation</li>
+</ul>
+<p>The primary functions for data generation within the package are <code>sim_reg</code> and <code>sim_glm</code>. The main distinction being that <code>sim_reg</code> is used for continuous outcomes whereas <code>sim_glm</code> is used for non-continuous outcomes. Currently <code>sim_glm</code> supports dichotomous outcomes (ie., 0/1; logistic) and count outcomes (poisson distributed).</p>
+<p>Below are two examples using the <code>sim_reg</code> and <code>sim_glm</code> to generate a simple two level cross sectional model.</p>
+<pre class="r"><code>fixed &lt;- ~ 1 + act_o + income + grad_degree_f
+fixed_param &lt;- c(3.2, 0.4, 0.02, 0.6)
+random &lt;- ~ 1 
+random_param &lt;- list(random_var = 10, rand_gen = &#39;rnorm&#39;)
+cov_param &lt;- list(dist_fun = &#39;rnorm&#39;,
+                  var_type = &#39;level1&#39;)
+n &lt;- 50
+p &lt;- 5
+error_var &lt;- 5
+with_err_gen &lt;- &#39;rnorm&#39;
+data_str &lt;- &#39;cross&#39;
+fact_vars &lt;- list(numlevels = c(36, 2), 
+                  var_type = c(&#39;level1&#39;, &#39;level1&#39;))
+
+sim_reg(fixed = fixed, fixed_param = fixed_param, random = random,
+        random_param = random_param, cov_param = cov_param, k = NULL, n = n, p = p,
+        error_var = error_var, with_err_gen = with_err_gen, 
+        data_str = data_str, fact_vars = fact_vars)</code></pre>
+<pre><code>## # A tibble: 250 x 14
+##    X.Intercept.       income act_o factor.grad_degree_f.2      income1
+##           &lt;dbl&gt;        &lt;dbl&gt; &lt;dbl&gt;                  &lt;dbl&gt;        &lt;dbl&gt;
+##  1            1 -0.772872289    28                      1 -0.772872289
+##  2            1  0.416096972     7                      0  0.416096972
+##  3            1 -0.022392623     8                      1 -0.022392623
+##  4            1 -0.141803138     1                      0 -0.141803138
+##  5            1  0.010888225    21                      0  0.010888225
+##  6            1 -0.007103202    17                      0 -0.007103202
+##  7            1 -0.612343775    22                      0 -0.612343775
+##  8            1  0.203837800    30                      0  0.203837800
+##  9            1  1.949610181    21                      1  1.949610181
+## 10            1  1.003149409    31                      1  1.003149409
+## # ... with 240 more rows, and 9 more variables: act_o1 &lt;dbl&gt;,
+## #   grad_degree_f &lt;dbl&gt;, b0 &lt;dbl&gt;, Fbeta &lt;dbl&gt;, randEff &lt;dbl&gt;, err &lt;dbl&gt;,
+## #   sim_data &lt;dbl&gt;, withinID &lt;int&gt;, clustID &lt;int&gt;</code></pre>
+<p>Similar values are used for the <code>sim_glm</code> function, however the within error is not specified.</p>
+<pre class="r"><code>fixed &lt;- ~ 1 + act_o + income + grad_degree_f
+fixed_param &lt;- c(0.5, 0.4, 0.02, 0.6)
+random &lt;- ~ 1 
+random_param &lt;- list(random_var = 10, rand_gen = &#39;rnorm&#39;)
+cov_param &lt;- list(dist_fun = &#39;rnorm&#39;,
+                  var_type = &#39;level1&#39;)
+n &lt;- 50
+p &lt;- 5
+data_str &lt;- &#39;cross&#39;
+fact_vars &lt;- list(numlevels = c(36, 2), 
+                  var_type = c(&#39;level1&#39;, &#39;level1&#39;))
+
+sim_glm(fixed = fixed, fixed_param = fixed_param, random = random,
+        random_param = random_param, cov_param = cov_param, k = NULL, n = n, p = p,
+        data_str = data_str, fact_vars = fact_vars, outcome_type = &#39;logistic&#39;)</code></pre>
+<pre><code>## # A tibble: 250 x 15
+##    X.Intercept.      income act_o factor.grad_degree_f.2     income1
+##           &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt;                  &lt;dbl&gt;       &lt;dbl&gt;
+##  1            1  0.05600817     6                      1  0.05600817
+##  2            1  0.56322606    24                      1  0.56322606
+##  3            1 -0.11876126     1                      0 -0.11876126
+##  4            1  0.79058375    11                      1  0.79058375
+##  5            1  2.45043806    21                      0  2.45043806
+##  6            1  1.77433262    10                      1  1.77433262
+##  7            1 -1.56422506     3                      1 -1.56422506
+##  8            1 -1.70684183    11                      1 -1.70684183
+##  9            1 -0.79035323    31                      0 -0.79035323
+## 10            1  0.03784287     7                      0  0.03784287
+## # ... with 240 more rows, and 10 more variables: act_o1 &lt;dbl&gt;,
+## #   grad_degree_f &lt;dbl&gt;, b0 &lt;dbl&gt;, Fbeta &lt;dbl&gt;, randEff &lt;dbl&gt;,
+## #   logistic &lt;dbl&gt;, prob &lt;dbl&gt;, sim_data &lt;dbl&gt;, withinID &lt;int&gt;,
+## #   clustID &lt;int&gt;</code></pre>
+<p>You could easily simulate a count outcome by changing <code>outcome_type = 'logistic'</code> in the last example to <code>outcome_type = 'poisson'</code>.</p>
+</div>
+<div id="power" class="section level2">
+<h2>Power</h2>
+<p>The package also includes wrappers around the simulation functions to explore empirical power under these frameworks. For example for a simple regression:</p>
+<pre class="r"><code>fixed &lt;- ~ 1 + act + diff + numCourse + act:numCourse
+fixed_param &lt;- c(0.5, 1.1, 0.6, 0.9, 1.1)
+cov_param &lt;- list(dist_fun = c(&#39;rnorm&#39;, &#39;rnorm&#39;, &#39;rnorm&#39;),
+                  var_type = c(&quot;single&quot;, &quot;single&quot;, &quot;single&quot;),
+                  opts = list(list(mean = 0, sd = 2),
+                              list(mean = 0, sd = 2),
+                              list(mean = 0, sd = 1)))
+n &lt;- 150
+error_var &lt;- 20
+with_err_gen &lt;- &#39;rnorm&#39;
+
+pow_param &lt;- c(&#39;(Intercept)&#39;, &#39;act&#39;, &#39;diff&#39;, &#39;numCourse&#39;)
+alpha &lt;- .01
+pow_dist &lt;- &quot;t&quot;
+pow_tail &lt;- 2
+replicates &lt;- 50
+
+power_out &lt;- sim_pow(fixed = fixed, fixed_param = fixed_param, cov_param = cov_param,
+                     n = n, error_var = error_var, with_err_gen = with_err_gen, 
+                     data_str = &quot;single&quot;, pow_param = pow_param, alpha = alpha,
+                     pow_dist = pow_dist, pow_tail = pow_tail, 
+                     replicates = replicates, raw_power = FALSE)
+power_out</code></pre>
+<pre><code>## # A tibble: 4 x 6
+##           var avg_test_stat sd_test_stat power num_reject num_repl
+##        &lt;fctr&gt;         &lt;dbl&gt;        &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)      1.650382    0.9693836  0.14          7       50
+## 2         act      6.006373    1.0708427  1.00         50       50
+## 3        diff      3.416535    0.9326546  0.82         41       50
+## 4   numCourse      2.370347    0.9836364  0.38         19       50</code></pre>
+<p>Where now the simulation function <code>sim_reg</code> replicates 50 times and the estimates are used to generate empirical power for each parameter in the model. This idea becomes more powerful when a Monte Carlo like varying of parameters are used. This can ensure a much larger, explorative, and descriptive power analysis. These analyses if done well with the coverage of the parameters varied, may be more appropriate/realistic based on the data to be collected (or more similar to the data that was collected for post-hoc power analyses). Below is a simple example of varying parameters in the power analysis.</p>
+<pre class="r"><code>fixed &lt;- ~ 1 + act + diff + numCourse + act:numCourse
+fixed_param &lt;- c(0.5, 1.1, 0.6, 0.9, 1.1)
+cov_param &lt;- list(dist_fun = c(&#39;rnorm&#39;, &#39;rnorm&#39;, &#39;rnorm&#39;),
+                  var_type = c(&quot;single&quot;, &quot;single&quot;, &quot;single&quot;),
+                  opts = list(list(mean = 0, sd = 2),
+                              list(mean = 0, sd = 2),
+                              list(mean = 0, sd = 1)))
+n &lt;- NULL
+error_var &lt;- NULL
+with_err_gen &lt;- &#39;rnorm&#39;
+pow_param &lt;- c(&#39;(Intercept)&#39;, &#39;act&#39;, &#39;diff&#39;, &#39;numCourse&#39;)
+alpha &lt;- .01
+pow_dist &lt;- &quot;t&quot;
+
+pow_tail &lt;- 2
+replicates &lt;- 50
+terms_vary &lt;- list(n = c(20, 40, 60, 80, 100), 
+                   error_var = c(5, 10, 20))
+
+power_out &lt;- sim_pow(fixed = fixed, fixed_param = fixed_param, cov_param = cov_param,
+                     n = n, error_var = error_var, with_err_gen = with_err_gen, 
+                     data_str = &quot;single&quot;, pow_param = pow_param, alpha = alpha,
+                     pow_dist = pow_dist, pow_tail = pow_tail, 
+                     replicates = replicates, terms_vary = terms_vary, 
+                     raw_power = FALSE)
+
+power_out</code></pre>
+<pre><code>## # A tibble: 60 x 8
+## # Groups:   var, n [?]
+##            var     n error_var avg_test_stat sd_test_stat power num_reject
+##         &lt;fctr&gt; &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;        &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;
+##  1 (Intercept)    20         5     1.1585985    1.1659626  0.10          5
+##  2 (Intercept)    20        10     0.9295801    0.8381110  0.04          2
+##  3 (Intercept)    20        20     0.7667661    0.5516210  0.00          0
+##  4 (Intercept)    40         5     1.8054688    1.0987028  0.24         12
+##  5 (Intercept)    40        10     1.0318538    0.7035785  0.02          1
+##  6 (Intercept)    40        20     0.9198477    0.7038914  0.02          1
+##  7 (Intercept)    60         5     2.0447040    0.9094806  0.30         15
+##  8 (Intercept)    60        10     1.1719409    0.7894543  0.08          4
+##  9 (Intercept)    60        20     0.8776733    0.7000668  0.02          1
+## 10 (Intercept)    80         5     2.0065774    1.0137946  0.24         12
+## # ... with 50 more rows, and 1 more variables: num_repl &lt;dbl&gt;</code></pre>
+<p>Similar syntax can be used for nested designs as well as with generalized models. These models and data types take more time to run compared to the single level designs above. Therefore, it is recommended to perform small simulations initially to ensure no errors and estimate how much time the simulation may take.</p>
+</div>
+<div id="shiny-app" class="section level2">
+<h2>Shiny App</h2>
+<p>The package also comes with a Shiny app that contains most (but not all) of the features found in the full package. These will likely be implemented slowly over time. You can run the Shiny app locally with the following function:</p>
+<pre class="r"><code>simglm::run_shiny()</code></pre>
+<p>One note, there are errors that occur in the stack trace, however as far as I can tell in my testing the app runs okay.</p>
+<div id="jsm" class="section level3">
+<h3>JSM</h3>
+<p>Of note to anyone attending JSM this year, I am talking about the <code>simglm</code> package <a href="https://ww2.amstat.org/meetings/jsm/2017/onlineprogram/ActivityDetails.cfm?SessionID=214411" class="uri">https://ww2.amstat.org/meetings/jsm/2017/onlineprogram/ActivityDetails.cfm?SessionID=214411</a>. Slides of this talk will be posted likely after the talk on my website.</p>
+<p>Bugs and feature requests are welcomed and can be submitted directly to GitHub <a href="https://github.com/lebebr01/simglm/issues" class="uri">https://github.com/lebebr01/simglm/issues</a>.</p>
+</div>
+</div>

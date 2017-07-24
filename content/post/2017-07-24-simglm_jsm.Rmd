@@ -1,0 +1,157 @@
+---
+title: "Announcing `simglm` version 0.6.0: Power and Simulation of Generalized Linear Mixed Models"
+author: "Brandon LeBeau"
+date: 2017-07-24
+categories: ["r", "simglm", "package"]
+slug: "simglm-jsm"
+---
+
+The `simglm` package has an update on CRAN bumping the version up to 0.6.0. This update has added the ability to simulate count data (poisson) and also has fixed (I think) the Shiny app that comes with the package. As I have not posted about this package since the first CRAN release (v 0.5.0), I plan to give an overview of all that the package offers in addition to the new additions.
+
+## Installation
+
+The package can be installed directly from CRAN:
+
+```{r install, eval = FALSE}
+install.packages("simglm")
+```
+
+```{r load_package, echo = FALSE, warning = FALSE, message = FALSE, error = FALSE}
+library(simglm)
+```
+
+## `simglm` Features
+The package allows for flexible simulation of general(-ized) linear (mixed) models with up to three levels of nesting. The flexibility comes from the ability to easily vary data generation procedures. For example one can use any R data generating function to simulate error, random effect, or covariate distributions. Other data generating options can include:
+
+- heterogeneity of variance
+- missing data
+- ARIMA models for within error structure
+- flexible time specification for longitudinal models
+- unbalanced data generation for nested designs
+- correlated covariates
+- factor/categorical variable generation
+
+The primary functions for data generation within the package are `sim_reg` and `sim_glm`. The main distinction being that `sim_reg` is used for continuous outcomes whereas `sim_glm` is used for non-continuous outcomes. Currently `sim_glm` supports dichotomous outcomes (ie., 0/1; logistic) and count outcomes (poisson distributed).
+
+Below are two examples using the `sim_reg` and `sim_glm` to generate a simple two level cross sectional model.
+
+```{r simreg}
+fixed <- ~ 1 + act_o + income + grad_degree_f
+fixed_param <- c(3.2, 0.4, 0.02, 0.6)
+random <- ~ 1 
+random_param <- list(random_var = 10, rand_gen = 'rnorm')
+cov_param <- list(dist_fun = 'rnorm',
+                  var_type = 'level1')
+n <- 50
+p <- 5
+error_var <- 5
+with_err_gen <- 'rnorm'
+data_str <- 'cross'
+fact_vars <- list(numlevels = c(36, 2), 
+                  var_type = c('level1', 'level1'))
+
+sim_reg(fixed = fixed, fixed_param = fixed_param, random = random,
+        random_param = random_param, cov_param = cov_param, k = NULL, n = n, p = p,
+        error_var = error_var, with_err_gen = with_err_gen, 
+        data_str = data_str, fact_vars = fact_vars)
+```
+
+Similar values are used for the `sim_glm` function, however the within error is not specified.
+
+```{r simglm}
+fixed <- ~ 1 + act_o + income + grad_degree_f
+fixed_param <- c(0.5, 0.4, 0.02, 0.6)
+random <- ~ 1 
+random_param <- list(random_var = 10, rand_gen = 'rnorm')
+cov_param <- list(dist_fun = 'rnorm',
+                  var_type = 'level1')
+n <- 50
+p <- 5
+data_str <- 'cross'
+fact_vars <- list(numlevels = c(36, 2), 
+                  var_type = c('level1', 'level1'))
+
+sim_glm(fixed = fixed, fixed_param = fixed_param, random = random,
+        random_param = random_param, cov_param = cov_param, k = NULL, n = n, p = p,
+        data_str = data_str, fact_vars = fact_vars, outcome_type = 'logistic')
+```
+
+You could easily simulate a count outcome by changing `outcome_type = 'logistic'` in the last example to `outcome_type = 'poisson'`.
+
+## Power
+The package also includes wrappers around the simulation functions to explore empirical power under these frameworks. For example for a simple regression:
+
+```{r power_sim_reg}
+fixed <- ~ 1 + act + diff + numCourse + act:numCourse
+fixed_param <- c(0.5, 1.1, 0.6, 0.9, 1.1)
+cov_param <- list(dist_fun = c('rnorm', 'rnorm', 'rnorm'),
+                  var_type = c("single", "single", "single"),
+                  opts = list(list(mean = 0, sd = 2),
+                              list(mean = 0, sd = 2),
+                              list(mean = 0, sd = 1)))
+n <- 150
+error_var <- 20
+with_err_gen <- 'rnorm'
+
+pow_param <- c('(Intercept)', 'act', 'diff', 'numCourse')
+alpha <- .01
+pow_dist <- "t"
+pow_tail <- 2
+replicates <- 50
+
+power_out <- sim_pow(fixed = fixed, fixed_param = fixed_param, cov_param = cov_param,
+                     n = n, error_var = error_var, with_err_gen = with_err_gen, 
+                     data_str = "single", pow_param = pow_param, alpha = alpha,
+                     pow_dist = pow_dist, pow_tail = pow_tail, 
+                     replicates = replicates, raw_power = FALSE)
+power_out
+```
+
+Where now the simulation function `sim_reg` replicates 50 times and the estimates are used to generate empirical power for each parameter in the model. This idea becomes more powerful when a Monte Carlo like varying of parameters are used. This can ensure a much larger, explorative, and descriptive power analysis. These analyses if done well with the coverage of the parameters varied, may be more appropriate/realistic based on the data to be collected (or more similar to the data that was collected for post-hoc power analyses). Below is a simple example of varying parameters in the power analysis.
+
+```{r power_vary}
+fixed <- ~ 1 + act + diff + numCourse + act:numCourse
+fixed_param <- c(0.5, 1.1, 0.6, 0.9, 1.1)
+cov_param <- list(dist_fun = c('rnorm', 'rnorm', 'rnorm'),
+                  var_type = c("single", "single", "single"),
+                  opts = list(list(mean = 0, sd = 2),
+                              list(mean = 0, sd = 2),
+                              list(mean = 0, sd = 1)))
+n <- NULL
+error_var <- NULL
+with_err_gen <- 'rnorm'
+pow_param <- c('(Intercept)', 'act', 'diff', 'numCourse')
+alpha <- .01
+pow_dist <- "t"
+
+pow_tail <- 2
+replicates <- 50
+terms_vary <- list(n = c(20, 40, 60, 80, 100), 
+                   error_var = c(5, 10, 20))
+
+power_out <- sim_pow(fixed = fixed, fixed_param = fixed_param, cov_param = cov_param,
+                     n = n, error_var = error_var, with_err_gen = with_err_gen, 
+                     data_str = "single", pow_param = pow_param, alpha = alpha,
+                     pow_dist = pow_dist, pow_tail = pow_tail, 
+                     replicates = replicates, terms_vary = terms_vary, 
+                     raw_power = FALSE)
+
+power_out
+```
+
+Similar syntax can be used for nested designs as well as with generalized models. These models and data types take more time to run compared to the single level designs above. Therefore, it is recommended to perform small simulations initially to ensure no errors and estimate how much time the simulation may take.
+
+## Shiny App
+The package also comes with a Shiny app that contains most (but not all) of the features found in the full package. These will likely be implemented slowly over time. You can run the Shiny app locally with the following function:
+
+```{r shiny, eval = FALSE}
+simglm::run_shiny()
+```
+
+One note, there are errors that occur in the stack trace, however as far as I can tell in my testing the app runs okay.
+
+
+### JSM
+Of note to anyone attending JSM this year, I am talking about the `simglm` package <https://ww2.amstat.org/meetings/jsm/2017/onlineprogram/ActivityDetails.cfm?SessionID=214411>. Slides of this talk will be posted likely after the talk on my website.
+
+Bugs and feature requests are welcomed and can be submitted directly to GitHub <https://github.com/lebebr01/simglm/issues>. 
