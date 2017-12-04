@@ -31,14 +31,14 @@ temp_single &lt;- sim_reg(fixed = fixed, fixed_param = fixed_param,
                        data_str = &quot;single&quot;)
 head(temp_single)</code></pre>
 <pre><code>## # A tibble: 6 x 9
-##   X.Intercept.         act       diff   numCourse act.numCourse      Fbeta
-##          &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;
-## 1            1  0.04045215 -0.7738108  0.02183119  0.0008831184  1.4661731
-## 2            1  0.09351232  1.3360941  1.34312887  0.1255991021  8.6622926
-## 3            1  0.06066363 -1.2230152  1.26423076  0.0766928310  5.5978327
-## 4            1  0.01352531  0.3356532 -0.12900022 -0.0017447676  1.9347642
-## 5            1 -0.91711660 -0.3569118  0.85737040 -0.7863086260 -0.5971991
-## 6            1  1.40470811  1.8956529 -0.83768332 -1.1767005519  4.2291926
+##   X.Intercept.         act        diff  numCourse act.numCourse      Fbeta
+##          &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;
+## 1            1  1.16400064  0.04146568 -0.4081824   -0.47512457  4.3185807
+## 2            1  0.07767124 -0.30805914 -0.9135958   -0.07096011 -1.3368796
+## 3            1  0.59664845  1.23434623 -0.4807911   -0.28686324  3.3644448
+## 4            1 -0.40838052  0.04052121 -1.5013384    0.61311736 -3.6214506
+## 5            1 -1.93593400 -0.31731900 -1.4011728    2.71257798 -5.5400037
+## 6            1 -0.05863513  0.65520670 -1.0004081    0.05865905 -0.9634439
 ## # ... with 3 more variables: err &lt;dbl&gt;, sim_data &lt;dbl&gt;, ID &lt;int&gt;</code></pre>
 <p>Then one can extend this to conduct of power analysis. The benefit of this approach is that you are able to generate data that hopefully more closely resembles data that is to be collected and can also evaluate assumption violations, sample size differences, and other conditions directly into the power analysis similar to a Monte Carlo simulation.</p>
 <pre class="r"><code>fixed &lt;- ~ 1 + act + diff + numCourse + act:numCourse
@@ -74,17 +74,17 @@ power_out &lt;- sim_pow(fixed = fixed, fixed_param = fixed_param,
                      pow_dist = pow_dist, pow_tail = pow_tail, 
                      replicates = replicates, terms_vary = terms_vary)
 head(power_out)</code></pre>
-<pre><code>## # A tibble: 6 x 11
-## # Groups:   var, n, error_var, fixed_param [3]
-##           var     n error_var         fixed_param
-##        &lt;fctr&gt; &lt;dbl&gt;     &lt;dbl&gt;              &lt;fctr&gt;
+<pre><code>## # A tibble: 6 x 13
+## # Groups:   term, n, error_var, fixed_param [3]
+##          term     n error_var         fixed_param
+##         &lt;chr&gt; &lt;dbl&gt;     &lt;dbl&gt;              &lt;fctr&gt;
 ## 1 (Intercept)    20         5 0.5,1.1,0.6,0.9,1.1
 ## 2 (Intercept)    20         5 0.5,1.1,0.6,0.9,1.1
 ## 3 (Intercept)    20         5 0.6,1.1,0.6,0.9,1.1
 ## 4 (Intercept)    20         5 0.6,1.1,0.6,0.9,1.1
 ## 5 (Intercept)    20        10 0.5,1.1,0.6,0.9,1.1
 ## 6 (Intercept)    20        10 0.5,1.1,0.6,0.9,1.1
-## # ... with 7 more variables: cov_param &lt;fctr&gt;, avg_test_stat &lt;dbl&gt;,
-## #   sd_test_stat &lt;dbl&gt;, power &lt;dbl&gt;, num_reject &lt;dbl&gt;, num_repl &lt;dbl&gt;,
-## #   data &lt;list&gt;</code></pre>
+## # ... with 9 more variables: cov_param &lt;fctr&gt;, avg_test_stat &lt;dbl&gt;,
+## #   sd_test_stat &lt;dbl&gt;, avg_std_err &lt;dbl&gt;, sd_std_err &lt;dbl&gt;, power &lt;dbl&gt;,
+## #   num_reject &lt;dbl&gt;, num_repl &lt;dbl&gt;, data &lt;list&gt;</code></pre>
 <p>Questions and feedback are welcomed by filing an issue on GitHub here: <a href="https://github.com/lebebr01/simglm/issues" class="uri">https://github.com/lebebr01/simglm/issues</a>.</p>

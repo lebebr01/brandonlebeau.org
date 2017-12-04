@@ -6,13 +6,9 @@
     <div id="main">
         <!-- Please note that the param orderByPublishDate is no longer being used
              since the pagination is not what is expected. Use at your own risk! -->
-        {{ if .Site.Params.orderByPublishDate }}
-            {{ $paginator := .Paginate (where .Data.Pages.ByPublishDate.Reverse "Type" "publications") }}
-        {{ else }}
-            {{ $paginator := .Paginate (where .Site.Pages "Type" "publications") }}
-        {{ end }}
+            {{ $paginator := .Paginate (where (.Data.Pages.GroupByDate "2006") "Type" "publications") 5 }}
 
-        {{ range .Paginator.Pages }}
+        {{ range $paginator.Pages }}
             {{ .Render "content-list" }}
         {{ end }}
 

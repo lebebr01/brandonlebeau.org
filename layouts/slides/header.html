@@ -1,6 +1,6 @@
 <header>
     <div class="title">
-            <h2><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+            <h3><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
         {{ with .Description }}
             <p>{{ . }}
             {{ end }}
@@ -11,11 +11,7 @@
         
     </div>
     <div class="meta">
-        {{ if .Site.Params.orderByPublishDate }}
-            {{ $.Scratch.Set "dateType" .PublishDate }}
-        {{ else }}
-            {{ $.Scratch.Set "dateType" .Date }}
-        {{ end }}
+        {{ $.Scratch.Set "dateType" .Date }}
 
         <time class="published"
             datetime='{{ ($.Scratch.Get "dateType").Format "2006-01-02" }}'>
