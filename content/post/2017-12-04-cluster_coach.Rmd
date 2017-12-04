@@ -3,7 +3,7 @@ title: "Hierarchical Cluster Analysis of Coach ELO Ratings"
 author: "Brandon LeBeau" 
 author2: "Andrew Zieffler" 
 author3: "Kyle Nickodem"
-date: 2017-12-01
+date: 2017-12-04
 categories: ["r", "college football", "cluster analysis"]
 slug: "cluster-coaches"
 ---
