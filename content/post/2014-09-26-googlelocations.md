@@ -15,7 +15,7 @@ Kind of a cool process. The map shows places I've been the last year or so (does
 
 Below is the code I used to load, manipulate, and plot my google location data. To replicate you would need to download your own google location data. Has anyone else made sense of all this data?
 
-![](http://educate-r.org/figs/myjson.png) 
+![](/figs/myjson.png) 
 
 
 ```r

@@ -23,10 +23,10 @@ h1$print('chart1', include_assets = TRUE, cdn = TRUE)
 
 As in one of my prior posts about *rCharts* I manually added a few features to the Javascript manually.  I find that easier than bundling lists upon lists to achieve the desired result.  Below is the final image:
 
-<script type='text/javascript' src=http://code.jquery.com/jquery-1.9.1.min.js></script>
-<script type='text/javascript' src=http://code.highcharts.com/highcharts.js></script>
-<script type='text/javascript' src=http://code.highcharts.com/highcharts-more.js></script>
-<script type='text/javascript' src=http://code.highcharts.com/modules/exporting.js></script> 
+<script type='text/javascript' src=https://code.jquery.com/jquery-1.9.1.min.js></script>
+<script type='text/javascript' src=https://code.highcharts.com/highcharts.js></script>
+<script type='text/javascript' src=https://code.highcharts.com/highcharts-more.js></script>
+<script type='text/javascript' src=https://code.highcharts.com/modules/exporting.js></script> 
  <style>
   .rChart {
     display: block;
