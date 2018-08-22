@@ -1,0 +1,179 @@
+---
+title: "pdfsearch v0.3.0"
+author: "Brandon LeBeau"
+date: 2018-08-22
+categories: ["r", "pdfsearch", "pdf"]
+slug: "pdfsearch-0-3-0"
+---
+
+
+
+<p>I’m happy to formally announce a major update to the developmental version of the <a href="https://github.com/lebebr01/pdfsearch">pdfsearch</a> R package. In brief, this version includes support for splitting the PDF by sentences instead of by lines of text. Secondly, initial testing of splitting PDFs that are aligned in multiple columns has been promising. This functionality attempts to align the multiple columns into a single column in which the keyword searching peformed by pdfsearch can be stronger with the search being done in context. Both of these new additions will be explored in more detail below.</p>
+<div id="split-pdfs-into-sentences" class="section level2">
+<h2>Split PDFs into sentences</h2>
+<p>We will use the following PDF of a paper found on arXiv by Schifeling, Reiter, and DeYoreo called Data Fusion for Correcting Measurement Errors <a href="https://arxiv.org/abs/1610.00147">paper here</a>. Before version 0.3.0 of pdfsearch, the pdf was only split into individual lines, see <a href="https://brandonlebeau.org/2016/12/02/introduction-of-the-pdfsearch-package/">this blog post</a> for more examples of pdfsearch. To be more concrete, let’s see what that would look like for a search looking for the term “measurement error”. For this the <code>keyword_search</code> function can be used to parse the PDF to text using the <a href="https://ropensci.org/blog/2016/03/01/pdftools-and-jeroen/">pdftools package</a>.</p>
+<pre class="r"><code># load the package
+library(pdfsearch)
+
+pdf_url &lt;- &quot;https://arxiv.org/pdf/1610.00147.pdf&quot;
+search_result &lt;- keyword_search(pdf_url, keyword = c(&#39;measurement error&#39;),
+  path = TRUE, remove_hyphen = TRUE, convert_sentence = FALSE)
+
+# Collapse to view results
+head(data.frame(search_result))</code></pre>
+<pre><code>##             keyword page_num line_num
+## 1 measurement error        1        5
+## 2 measurement error        1       19
+## 3 measurement error        1       21
+## 4 measurement error        2       29
+## 5 measurement error        2       32
+## 6 measurement error        2       33
+##                                                                                       line_text
+## 1                 Often in surveys, key items are subject to measurement errors. Given just the
+## 2            the sensitivity of various analyses to different choices for the measurement error
+## 3                            KEY WORDS: fusion, imputation, measurement error, missing, survey.
+## 4          Survey data often contain items that are subject to measurement errors. For example,
+## 5 these measurement errors can result in degraded inferences (Kim et al., 2015). Unfortunately,
+## 6                the distribution of the measurement errors typically is not estimable from the
+##                                                                                            token_text
+## 1             often, in, surveys, key, items, are, subject, to, measurement, errors, given, just, the
+## 2       the, sensitivity, of, various, analyses, to, different, choices, for, the, measurement, error
+## 3                                 key, words, fusion, imputation, measurement, error, missing, survey
+## 4      survey, data, often, contain, items, that, are, subject, to, measurement, errors, for, example
+## 5 these, measurement, errors, can, result, in, degraded, inferences, kim, et, al, 2015, unfortunately
+## 6           the, distribution, of, the, measurement, errors, typically, is, not, estimable, from, the</code></pre>
+<p>The results show the keyword, the page number and line number where the match was found, the specific line of text that contains the search result, and the line of text tokenized into individual words. You may notice from the line_text output that the search result may be multiple sentences or a partial sentence instead of a full sentence. What the pdfsearch package was doing was taking the text in a single line of the PDF file and using that as the search string. One limitation of this approach is when phrases instead of single words are searched, if the phrase wraps to more than one line, the old version of pdfsearch would always miss these keywords.</p>
+<p>As a side note, you may have noticed that both “measurement error” and “measurement errors” are returned (look at the first match above). If we did not want to include the “s” in the match, we would need to add some regular expression to omit the “s” using negative look ahead (there are likely other ways to omit the “s” as well).</p>
+<pre class="r"><code>search_result_nos &lt;- keyword_search(pdf_url, keyword = c(&#39;measurement error(?!s)&#39;),
+  path = TRUE, remove_hyphen = TRUE, convert_sentence = FALSE)
+
+# Collapse to view results
+head(data.frame(search_result_nos))</code></pre>
+<pre><code>##                  keyword page_num line_num
+## 1 measurement error(?!s)        1       19
+## 2 measurement error(?!s)        1       21
+## 3 measurement error(?!s)        4       85
+## 4 measurement error(?!s)        4       87
+## 5 measurement error(?!s)        4       92
+## 6 measurement error(?!s)        4      103
+##                                                                               line_text
+## 1    the sensitivity of various analyses to different choices for the measurement error
+## 2                    KEY WORDS: fusion, imputation, measurement error, missing, survey.
+## 3         the general framework for specifying measurement error models to leverage the
+## 4            measurement error in educational attainment in the 2010 American Community
+## 5 to different measurement error model specifications. In Section 5, we provide a brief
+## 6                                             attainment is prone to measurement error.
+##                                                                                        token_text
+## 1   the, sensitivity, of, various, analyses, to, different, choices, for, the, measurement, error
+## 2                             key, words, fusion, imputation, measurement, error, missing, survey
+## 3         the, general, framework, for, specifying, measurement, error, models, to, leverage, the
+## 4             measurement, error, in, educational, attainment, in, the, 2010, american, community
+## 5 to, different, measurement, error, model, specifications, in, section, 5, we, provide, a, brief
+## 6                                                   attainment, is, prone, to, measurement, error</code></pre>
+<div id="splitting-by-sentences" class="section level3">
+<h3>Splitting by sentences</h3>
+<p>The new default behavior in pdfsearch is to split the text into separate sentences instead of by text lines in the PDF document. Let’s do the first search that includes the “s” in the search, but now instead of splitting by lines split the text into sentences.</p>
+<pre class="r"><code>search_result_sent &lt;- keyword_search(pdf_url, keyword = c(&#39;measurement error&#39;),
+  path = TRUE, remove_hyphen = TRUE, convert_sentence = TRUE)
+
+nrow(search_result_sent)</code></pre>
+<pre><code>## [1] 36</code></pre>
+<pre class="r"><code>nrow(search_result)</code></pre>
+<pre><code>## [1] 31</code></pre>
+<p>You’ll notice now that an additional 5 search results were returned. One note, currently the line_num output in both do not match, in the future these will match and when sentences are returned a new output variable representing sentence number will also be returned. We can view the first few results to see how the line_text output differs from before. Internally, <code>stringi::stri_split_boundaries(text_lines, type = &quot;sentence&quot;)</code> is used to split the PDF text into sentences instead of lines of text.</p>
+<pre class="r"><code>head(data.frame(search_result_sent))</code></pre>
+<pre><code>##             keyword page_num line_num
+## 1 measurement error        1        2
+## 2 measurement error        1       10
+## 3 measurement error        1       12
+## 4 measurement error        1       15
+## 5 measurement error        1       17
+## 6 measurement error        1       18
+##                                                                                                                                 line_text
+## 1 Reiter, Maria DeYoreo* arXiv:1610.00147v1 [stat.ME] 1 Oct 2016 Abstract Often in surveys, key items are subject to measurement errors. 
+## 2     We also present a process for assessing the sensitivity of various analyses to different choices for the measurement error models. 
+## 3                                                                     KEY WORDS: fusion, imputation, measurement error, missing, survey. 
+## 4                                         1  1      Introduction Survey data often contain items that are subject to measurement errors. 
+## 5                                       Left uncorrected, these measurement errors can result in degraded inferences (Kim et al., 2015). 
+## 6                       Unfortunately, the distribution of the measurement errors typically is not estimable from the survey data alone. 
+##                                                                                                                                             token_text
+## 1  reiter, maria, deyoreo, arxiv, 1610.00147v1, stat.me, 1, oct, 2016, abstract, often, in, surveys, key, items, are, subject, to, measurement, errors
+## 2 we, also, present, a, process, for, assessing, the, sensitivity, of, various, analyses, to, different, choices, for, the, measurement, error, models
+## 3                                                                                  key, words, fusion, imputation, measurement, error, missing, survey
+## 4                                                 1, 1, introduction, survey, data, often, contain, items, that, are, subject, to, measurement, errors
+## 5                                              left, uncorrected, these, measurement, errors, can, result, in, degraded, inferences, kim, et, al, 2015
+## 6                        unfortunately, the, distribution, of, the, measurement, errors, typically, is, not, estimable, from, the, survey, data, alone</code></pre>
+</div>
+</div>
+<div id="splitting-multi-column-pdf-documents" class="section level2">
+<h2>Splitting Multi-Column PDF Documents</h2>
+<p>The next major upgrade is the default behavior for splitting PDF documents that are aligned in multiple columns. One example of this can be found in a paper on arXiv by Guo and Deng called Flexible Online Repeated Measures Experiment <a href="https://arxiv.org/abs/1501.00450">paper here</a>.</p>
+<p>Let’s first look at the output of a search without splitting the PDF.</p>
+<pre class="r"><code>pdf_url &lt;- &quot;https://arxiv.org/pdf/1501.00450.pdf&quot;
+
+no_split &lt;- keyword_search(pdf_url, keyword = c(&#39;repeated measures&#39;, &#39;mixed effects&#39;),
+                           path = TRUE, remove_hyphen = FALSE, 
+                           convert_sentence = FALSE)
+
+head(data.frame(no_split))</code></pre>
+<pre><code>##             keyword page_num line_num
+## 1 repeated measures        1       24
+## 2 repeated measures        2       58
+## 3 repeated measures        2      109
+## 4 repeated measures        2      111
+## 5 repeated measures        3      126
+## 6 repeated measures        6      449
+##                                                                                                                                line_text
+## 1 cally the repeated measures design, including the crossover           get false confidence about lack of negative effects. Statistical
+## 2            fast iterations and testing many ideas can reap the most         erations to repeated measures design, with variants to the
+## 3            repeated measures design in different stages of treatment        in this section we assume all users appear in all periods,
+## 4              ing the repeated measures analysis, reporting a “per week”       to metrics that are defined as simple average and assume
+## 5              In fact, the crossover design is a type of repeated measures     designs considered can be examined in the same framework
+## 6         values and the absence in a specific time window can still          It is common to analyze data from repeated measures design
+##                                                                                                                                   token_text
+## 1 cally, the, repeated, measures, design, including, the, crossover, get, false, confidence, about, lack, of, negative, effects, statistical
+## 2       fast, iterations, and, testing, many, ideas, can, reap, the, most, erations, to, repeated, measures, design, with, variants, to, the
+## 3      repeated, measures, design, in, different, stages, of, treatment, in, this, section, we, assume, all, users, appear, in, all, periods
+## 4         ing, the, repeated, measures, analysis, reporting, a, per, week, to, metrics, that, are, defined, as, simple, average, and, assume
+## 5    in, fact, the, crossover, design, is, a, type, of, repeated, measures, designs, considered, can, be, examined, in, the, same, framework
+## 6  values, and, the, absence, in, a, specific, time, window, can, still, it, is, common, to, analyze, data, from, repeated, measures, design</code></pre>
+<p>You’ll notice from the output that again the lines of text have a gap in the middle representing the white space between the multi-column layout. What the new <code>split_pdf</code> argument behavior attempts to recreate is the document structure that a reader would perform, namely read the left column first followed by the right column. A specific note, the <code>split_pdf</code> argument has only been tested on two column PDF layouts.</p>
+<p>Let’s now run the same search with splitting the PDF and also converting into sentences. This is done by setting the argument <code>split_pdf = TRUE</code>.</p>
+<pre class="r"><code>split_yes &lt;- keyword_search(pdf_url, keyword = c(&#39;repeated measures&#39;, &#39;mixed effects&#39;),
+                           path = TRUE, remove_hyphen = TRUE, split_pdf = TRUE,
+                           convert_sentence = TRUE)
+
+head(data.frame(split_yes))</code></pre>
+<pre><code>##             keyword page_num line_num
+## 1 repeated measures        1        5
+## 2 repeated measures        1       39
+## 3 repeated measures        1       41
+## 4 repeated measures        1       42
+## 5 repeated measures        1       49
+## 6 repeated measures        1       50
+##                                                                                                                                                                                                                                   line_text
+## 1 We introduce more sophisticated experimental designs, specifically the repeated measures design, including the crossover design and related variants, to increase KPI sensitivity with the same traffic size and duration of experiment. 
+## 2                                                                                                                        CUPED is in fact a form of repeated measures design, where multiple mea on the same subjects are taken over time. 
+## 3                       A/B Test CUPED Parallel Crossover Re-Randomized Table 1: Repeated Measures Designs In this paper we extend the idea further by employing the repeated measures design in different stages of treatment assignment. 
+## 4                                                                      The traditional A/B test can be analyzed using the repeated measures analysis, report a “per week” treatment effect, as show in row 3 “parallel” design in table 1. 
+## 5                                                                                        In fact, the crossover design is a type of repeated measures design commonly used in biomedical research to control for within-subject variation. 
+## 6                                     We also discuss practical considerations to repeated measures design, with variants to the crossover design to study the carry over effect, including the “re-randomized” design (row 5 in table 1). 
+##                                                                                                                                                                                                                                                           token_text
+## 1 we, introduce, more, sophisticated, experimental, designs, specifically, the, repeated, measures, design, including, the, crossover, design, and, related, variants, to, increase, kpi, sensitivity, with, the, same, traffic, size, and, duration, of, experiment
+## 2                                                                                                                                cuped, is, in, fact, a, form, of, repeated, measures, design, where, multiple, mea, on, the, same, subjects, are, taken, over, time
+## 3                   a, b, test, cuped, parallel, crossover, re, randomized, table, 1, repeated, measures, designs, in, this, paper, we, extend, the, idea, further, by, employing, the, repeated, measures, design, in, different, stages, of, treatment, assignment
+## 4                                                                           the, traditional, a, b, test, can, be, analyzed, using, the, repeated, measures, analysis, report, a, per, week, treatment, effect, as, show, in, row, 3, parallel, design, in, table, 1
+## 5                                                                                              in, fact, the, crossover, design, is, a, type, of, repeated, measures, design, commonly, used, in, biomedical, research, to, control, for, within, subject, variation
+## 6                                        we, also, discuss, practical, considerations, to, repeated, measures, design, with, variants, to, the, crossover, design, to, study, the, carry, over, effect, including, the, re, randomized, design, row, 5, in, table, 1</code></pre>
+<p>If you look at the text returned in the line_text output, the sentences now appear to make sense, are in context, and phrases of text are more likely to be returned if they happen to wrap to another line. The limitation of wrapping text is more pronounced in multiple column PDFs as there is much less text on a single line in each column of the PDF. Therefore, I think the search results should be more representative of the text in the document and should return better search results.</p>
+</div>
+<div id="next-steps" class="section level2">
+<h2>Next Steps</h2>
+<p>A few next steps prior to release to CRAN these new additions.</p>
+<ol style="list-style-type: decimal">
+<li>More testing of the <code>split_pdf</code> pdfsearch behavior.</li>
+<li>Exploration of automatic detection of two column PDFs to split automatically.</li>
+<li>Verify page and line number output when splitting into sentences instead of lines of text.</li>
+</ol>
+<p>If others test out the developmental version of the package, I’d welcome collaborators or testers of the new functionality. If you have issues, please log these through <a href="https://github.com/lebebr01/pdfsearch/issues">GitHub Issues</a> or have any contributions through <a href="https://github.com/lebebr01/pdfsearch/pulls">Pull Requests</a>.</p>
+</div>

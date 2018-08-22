@@ -1,0 +1,93 @@
+---
+title: "pdfsearch v0.3.0"
+author: "Brandon LeBeau"
+date: 2018-08-22
+categories: ["r", "pdfsearch", "pdf"]
+slug: "pdfsearch-0-3-0"
+---
+
+I'm happy to formally announce a major update to the developmental version of the [pdfsearch](https://github.com/lebebr01/pdfsearch) R package. In brief, this version includes support for splitting the PDF by sentences instead of by lines of text. Secondly, initial testing of splitting PDFs that are aligned in multiple columns has been promising. This functionality attempts to align the multiple columns into a single column in which the keyword searching peformed by pdfsearch can be stronger with the search being done in context. Both of these new additions will be explored in more detail below.
+
+## Split PDFs into sentences
+We will use the following PDF of a paper found on arXiv by Schifeling, Reiter, and DeYoreo called Data Fusion for Correcting Measurement Errors [paper here](https://arxiv.org/abs/1610.00147). Before version 0.3.0 of pdfsearch, the pdf was only split into individual lines, see [this blog post](https://brandonlebeau.org/2016/12/02/introduction-of-the-pdfsearch-package/) for more examples of pdfsearch. To be more concrete, let's see what that would look like for a search looking for the term "measurement error". For this the `keyword_search` function can be used to parse the PDF to text using the [pdftools package](https://ropensci.org/blog/2016/03/01/pdftools-and-jeroen/). 
+
+```{r old_behavior, message = FALSE, error = FALSE}
+# load the package
+library(pdfsearch)
+
+pdf_url <- "https://arxiv.org/pdf/1610.00147.pdf"
+search_result <- keyword_search(pdf_url, keyword = c('measurement error'),
+  path = TRUE, remove_hyphen = TRUE, convert_sentence = FALSE)
+
+# Collapse to view results
+head(data.frame(search_result))
+```
+
+The results show the keyword, the page number and line number where the match was found, the specific line of text that contains the search result, and the line of text tokenized into individual words. You may notice from the line_text output that the search result may be multiple sentences or a partial sentence instead of a full sentence. What the pdfsearch package was doing was taking the text in a single line of the PDF file and using that as the search string. One limitation of this approach is when phrases instead of single words are searched, if the phrase wraps to more than one line, the old version of pdfsearch would always miss these keywords.
+
+As a side note, you may have noticed that both "measurement error" and "measurement errors" are returned (look at the first match above). If we did not want to include the "s" in the match, we would need to add some regular expression to omit the "s" using negative look ahead (there are likely other ways to omit the "s" as well).
+
+```{r remove_s}
+search_result_nos <- keyword_search(pdf_url, keyword = c('measurement error(?!s)'),
+  path = TRUE, remove_hyphen = TRUE, convert_sentence = FALSE)
+
+# Collapse to view results
+head(data.frame(search_result_nos))
+```
+
+### Splitting by sentences
+The new default behavior in pdfsearch is to split the text into separate sentences instead of by text lines in the PDF document. Let's do the first search that includes the "s" in the search, but now instead of splitting by lines split the text into sentences.
+
+```{r sentence}
+search_result_sent <- keyword_search(pdf_url, keyword = c('measurement error'),
+  path = TRUE, remove_hyphen = TRUE, convert_sentence = TRUE)
+
+nrow(search_result_sent)
+nrow(search_result)
+```
+
+You'll notice now that an additional 5 search results were returned. One note, currently the line_num output in both do not match, in the future these will match and when sentences are returned a new output variable representing sentence number will also be returned. We can view the first few results to see how the line_text output differs from before. Internally, `stringi::stri_split_boundaries(text_lines, type = "sentence")` is used to split the PDF text into sentences instead of lines of text.
+
+```{r diff_search}
+head(data.frame(search_result_sent))
+```
+
+
+## Splitting Multi-Column PDF Documents
+The next major upgrade is the default behavior for splitting PDF documents that are aligned in multiple columns. One example of this can be found in a paper on arXiv by Guo and Deng called Flexible Online Repeated Measures Experiment [paper here](https://arxiv.org/abs/1501.00450). 
+
+Let's first look at the output of a search without splitting the PDF.
+
+```{r no_split}
+pdf_url <- "https://arxiv.org/pdf/1501.00450.pdf"
+
+no_split <- keyword_search(pdf_url, keyword = c('repeated measures', 'mixed effects'),
+                           path = TRUE, remove_hyphen = FALSE, 
+                           convert_sentence = FALSE)
+
+head(data.frame(no_split))
+```
+
+You'll notice from the output that again the lines of text have a gap in the middle representing the white space between the multi-column layout. What the new `split_pdf` argument behavior attempts to recreate is the document structure that a reader would perform, namely read the left column first followed by the right column. A specific note, the `split_pdf` argument has only been tested on two column PDF layouts.
+
+Let's now run the same search with splitting the PDF and also converting into sentences. This is done by setting the argument `split_pdf = TRUE`. 
+
+```{r split_pdf}
+split_yes <- keyword_search(pdf_url, keyword = c('repeated measures', 'mixed effects'),
+                           path = TRUE, remove_hyphen = TRUE, split_pdf = TRUE,
+                           convert_sentence = TRUE)
+
+head(data.frame(split_yes))
+```
+
+If you look at the text returned in the line_text output, the sentences now appear to make sense, are in context, and phrases of text are more likely to be returned if they happen to wrap to another line. The limitation of wrapping text is more pronounced in multiple column PDFs as there is much less text on a single line in each column of the PDF. Therefore, I think the search results should be more representative of the text in the document and should return better search results.
+
+## Next Steps
+A few next steps prior to release to CRAN these new additions. 
+
+1. More testing of the `split_pdf` pdfsearch behavior. 
+2. Exploration of automatic detection of two column PDFs to split automatically.
+3. Verify page and line number output when splitting into sentences instead of lines of text.
+
+If others test out the developmental version of the package, I'd welcome collaborators or testers of the new functionality. If you have issues, please log these through [GitHub Issues](https://github.com/lebebr01/pdfsearch/issues) or have any contributions through [Pull Requests](https://github.com/lebebr01/pdfsearch/pulls).
+
